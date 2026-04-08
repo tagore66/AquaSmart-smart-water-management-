@@ -17,12 +17,15 @@ const sendEmail = async (options) => {
     try {
         console.log('[EMAIL] Creating Transport for:', user);
         const transporter = nodemailer.createTransport({
-            service: service || 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false, // use STARTTLS
+            family: 4,     // force IPv4 - fixes ENETUNREACH on Render
             auth: {
                 user: user,
                 pass: pass
             },
-            connectionTimeout: 10000, 
+            connectionTimeout: 10000,
             greetingTimeout: 10000,
             socketTimeout: 10000
         });
