@@ -107,7 +107,7 @@ const Login = () => {
                 </div>
 
                 <a 
-                    href="http://localhost:5000/api/users/auth/google"
+                    href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/users/auth/google`}
                     className="w-full flex items-center justify-center gap-4 px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 group"
                 >
                     <div className="p-1.5 bg-white rounded-lg group-hover:scale-110 transition-transform">
