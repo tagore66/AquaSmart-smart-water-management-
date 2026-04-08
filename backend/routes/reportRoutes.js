@@ -15,11 +15,17 @@ router.post('/email', protect, async (req, res) => {
 
     try {
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            family: 4, // force IPv4 - fixes ENETUNREACH on Render
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
             },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000,
         });
 
         const mailOptions = {
