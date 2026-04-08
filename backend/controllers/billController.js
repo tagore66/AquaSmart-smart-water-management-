@@ -114,31 +114,27 @@ const payBill = async (req, res) => {
         
         const updatedBill = await bill.save();
 
-        // Send Email Notification
-        try {
-            await sendEmail({
-                email: req.user.email,
-                subject: 'Payment Successful - Aqua Smart',
-                message: `Hi ${req.user.firstName},\n\nThank you for your payment. Your bill of ₹${bill.amount} has been successfully settled.\n\nPayment ID: ${bill.paymentId}\nStatus: Completed\n\nThanks for being an eco-conscious user!\n\nAqua Smart Team`,
-                html: `
-                    <div style="font-family: Arial, sans-serif; color: #333;">
-                        <h2 style="color: #2563eb;">Payment Successful!</h2>
-                        <p>Hi <strong>${req.user.firstName}</strong>,</p>
-                        <p>Thank you for your payment. Your bill has been successfully settled.</p>
-                        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 12px; margin: 20px 0;">
-                            <p style="margin: 5px 0;"><strong>Amount Paid:</strong> ₹${bill.amount}</p>
-                            <p style="margin: 5px 0;"><strong>Payment ID:</strong> ${bill.paymentId}</p>
-                            <p style="margin: 5px 0;"><strong>Status:</strong> Completed</p>
-                        </div>
-                        <p>Thanks for being an eco-conscious user!</p>
-                        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;">
-                        <p style="font-size: 12px; color: #6b7280;">This is an automated message from Aqua Smart. Please do not reply.</p>
+        // Send Email Notification (fire-and-forget so user isn't blocked)
+        sendEmail({
+            email: req.user.email,
+            subject: 'Payment Successful - Aqua Smart',
+            message: `Hi ${req.user.firstName},\n\nThank you for your payment. Your bill of ₹${bill.amount} has been successfully settled.\n\nPayment ID: ${bill.paymentId}\nStatus: Completed\n\nThanks for being an eco-conscious user!\n\nAqua Smart Team`,
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #333;">
+                    <h2 style="color: #2563eb;">Payment Successful!</h2>
+                    <p>Hi <strong>${req.user.firstName}</strong>,</p>
+                    <p>Thank you for your payment. Your bill has been successfully settled.</p>
+                    <div style="background-color: #f3f4f6; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                        <p style="margin: 5px 0;"><strong>Amount Paid:</strong> ₹${bill.amount}</p>
+                        <p style="margin: 5px 0;"><strong>Payment ID:</strong> ${bill.paymentId}</p>
+                        <p style="margin: 5px 0;"><strong>Status:</strong> Completed</p>
                     </div>
-                `
-            });
-        } catch (error) {
-            console.error('Email notification failed for payment:', error.message);
-        }
+                    <p>Thanks for being an eco-conscious user!</p>
+                    <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+                    <p style="font-size: 12px; color: #6b7280;">This is an automated message from Aqua Smart. Please do not reply.</p>
+                </div>
+            `
+        }).catch(err => console.error('Payment email failed:', err.message));
 
         res.json(updatedBill);
     } else {

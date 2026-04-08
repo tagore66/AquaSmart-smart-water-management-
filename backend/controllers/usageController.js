@@ -38,9 +38,8 @@ const addWaterUsage = async (req, res) => {
     });
     await bill.save();
 
-    // Send Bill Generation Email
-    try {
-        await sendEmail({
+    // Send Bill Generation Email (fire-and-forget so user isn't blocked waiting)
+    sendEmail({
             email: req.user.email,
             subject: 'Weekly Water Report & Bill Generated - AquaSmart',
             message: `Hi ${req.user.firstName},\n\nYour water usage for the week of ${new Date(weekStarting).toLocaleDateString()} has been recorded.\n\nTotal Usage: ${totalLiters}L\nTotal Bill Amount: ₹${totalCost}\n\nYou can view the detailed breakdown and pay your bill on the AquaSmart dashboard.\n\nThank you for being an eco-conscious user!\n\nAquaSmart Team`,
@@ -80,10 +79,7 @@ const addWaterUsage = async (req, res) => {
                     </div>
                 </div>
             `
-        });
-    } catch (error) {
-        console.error('Bill generation email failed:', error.message);
-    }
+        }).catch(err => console.error('Bill generation email failed:', err.message));
 
     // PHASE 5: Leak Detection & High Usage Alerts
     const previousUsage = await WaterUsage.findOne({ 
@@ -107,16 +103,12 @@ const addWaterUsage = async (req, res) => {
                 severity: 'high'
             });
 
-            // Send Email
-            try {
-                await sendEmail({
+            // Send Email (fire-and-forget)
+            sendEmail({
                     email: req.user.email,
                     subject: '⚠️ Alert: Possible Water Leak Detected',
                     message: `Hi ${req.user.firstName},\n\nWe detected a significant increase (${increasePercentage.toFixed(2)}%) in your water usage this week compared to last. This may indicate a leak.\n\nTotal Usage: ${totalLiters}L\nPrevious Usage: ${previousUsage.totalLiters}L\n\nPlease check your plumbing fixtures and appliances.\n\nEco Regards,\nAquaSmart Team`,
-                });
-            } catch (error) {
-                console.error('Email sending failed:', error.message);
-            }
+                }).catch(err => console.error('Leak email failed:', err.message));
         }
     }
 
@@ -131,16 +123,12 @@ const addWaterUsage = async (req, res) => {
             severity: 'medium'
         });
 
-        // Send Email
-        try {
-            await sendEmail({
+        // Send Email (fire-and-forget)
+        sendEmail({
                 email: req.user.email,
                 subject: '⚠️ Warning: High Water Consumption',
                 message: `Hi ${req.user.firstName},\n\nYour weekly water consumption has reached ${totalLiters}L, which is higher than the recommended limit of 5000L.\n\nConsider checking our "Save Water" section for tips on reducing consumption.\n\nEco Regards,\nAquaSmart Team`,
-            });
-        } catch (error) {
-            console.error('Email sending failed:', error.message);
-        }
+            }).catch(err => console.error('High usage email failed:', err.message));
     }
 
     res.status(201).json({ 
