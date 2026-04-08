@@ -1,56 +1,40 @@
 // utils/emailService.js
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 const sendEmail = async (options) => {
     console.log('[EMAIL INITIATING] To:', options.email);
-    
-    // Verify environment variables are present immediately before attempting to build transporter
-    const user = process.env.EMAIL_USER;
-    const pass = process.env.EMAIL_PASS;
-    const service = process.env.EMAIL_SERVICE;
 
-    if (!user || user.includes('your-email') || !pass) {
-        console.error('[EMAIL ERROR] EMAIL_USER or EMAIL_PASS environment variables are missing or default in Render!');
-        throw new Error('Email server is not configured correctly in Render (missing variables).');
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+        console.error('[EMAIL ERROR] RESEND_API_KEY is missing in environment variables!');
+        throw new Error('Email service not configured (missing RESEND_API_KEY).');
     }
 
     try {
-        console.log('[EMAIL] Creating Transport for:', user);
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false, // use STARTTLS
-            family: 4,     // force IPv4 - fixes ENETUNREACH on Render
-            auth: {
-                user: user,
-                pass: pass
-            },
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 10000
-        });
+        const resend = new Resend(apiKey);
 
-        const mailOptions = {
-            from: `"Aqua Smart" <${user}>`,
+        const { data, error } = await resend.emails.send({
+            from: 'Aqua Smart <onboarding@resend.dev>',
             to: options.email,
             subject: options.subject,
             text: options.message,
             html: options.html
-        };
+        });
 
-        console.log('[EMAIL] Attempting to sendMail...');
-        const info = await transporter.sendMail(mailOptions);
-        
+        if (error) {
+            console.error('[EMAIL RESEND ERROR]', error);
+            throw new Error(error.message);
+        }
+
         console.log('--- [EMAIL SYSTEM LOG] ---');
-        console.log('Status: Success (SENT)');
-        console.log('Message ID: %s', info.messageId);
+        console.log('Status: Success (SENT via Resend)');
+        console.log('Message ID:', data.id);
         console.log('----------------------------');
-        
-        return info;
+
+        return data;
     } catch (error) {
         console.error('--- [EMAIL SYSTEM FATAL ERROR] ---');
-        console.error('Email sending completely failed:', error.message);
-        console.error('Stack:', error.stack);
+        console.error('Email sending failed:', error.message);
         throw error;
     }
 };

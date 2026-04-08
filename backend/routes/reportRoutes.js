@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 // @desc    Email PDF report to user
 // @route   POST /api/reports/email
@@ -13,23 +13,16 @@ router.post('/email', protect, async (req, res) => {
         return res.status(400).json({ message: 'No PDF data provided' });
     }
 
-    try {
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            family: 4, // force IPv4 - fixes ENETUNREACH on Render
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 10000,
-        });
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+        return res.status(500).json({ message: 'Email service not configured on server' });
+    }
 
-        const mailOptions = {
-            from: `"AquaSmart Reports" <${process.env.EMAIL_USER}>`,
+    try {
+        const resend = new Resend(apiKey);
+
+        const { data, error } = await resend.emails.send({
+            from: 'AquaSmart Reports <onboarding@resend.dev>',
             to: req.user.email,
             subject: `Water Usage Report - ${weekLabel}`,
             text: `Hello ${req.user.firstName},\n\nPlease find attached your water usage report for the week of ${weekLabel}.\n\nStay sustainable!\nTeam AquaSmart`,
@@ -37,25 +30,19 @@ router.post('/email', protect, async (req, res) => {
                 {
                     filename: `AquaSmart_Report_${weekLabel.replace(/ /g, '_')}.pdf`,
                     content: pdfBase64.split('base64,')[1],
-                    encoding: 'base64'
                 }
             ]
-        };
-
-        await transporter.sendMail(mailOptions);
-        res.json({ message: 'Report emailed successfully!' });
-    } catch (error) {
-        console.error('Email report detailed error:', {
-            message: error.message,
-            code: error.code,
-            command: error.command,
-            stack: error.stack
         });
-        
-        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-            return res.status(500).json({ message: 'Email service not configured on server' });
+
+        if (error) {
+            console.error('Resend report email error:', error);
+            return res.status(500).json({ message: `Email failed: ${error.message}` });
         }
 
+        console.log('Report email sent successfully. ID:', data.id);
+        res.json({ message: 'Report emailed successfully!' });
+    } catch (error) {
+        console.error('Email report error:', error.message);
         res.status(500).json({ message: `Email failed: ${error.message}` });
     }
 });
