@@ -20,13 +20,20 @@ module.exports = function (passport) {
                 };
 
                 try {
-                    let user = await User.findOne({ googleId: profile.id });
+                    let user = await User.findOne({ email: profile.emails[0].value });
 
                     if (user) {
-                        done(null, user);
+                        // Link Google ID if they signed up manually first
+                        if (!user.googleId) {
+                            user.googleId = profile.id;
+                            user.avatar = user.avatar || profile.photos[0].value;
+                            await user.save();
+                        }
+                        return done(null, user);
                     } else {
+                        // Brand new user
                         user = await User.create(newUser);
-                        done(null, user);
+                        return done(null, user);
                     }
                 } catch (err) {
                     console.error(err);
