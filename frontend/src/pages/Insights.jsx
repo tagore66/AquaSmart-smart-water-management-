@@ -85,11 +85,15 @@ const Insights = () => {
 
     if (loading) {
         return (
-            <div className="flex bg-slate-950 min-h-screen">
-                <Navbar />
-                <div className="flex-1 flex items-center justify-center">
-                    <Droplet className="w-12 h-12 text-blue-500 animate-bounce" />
+            <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-12 space-y-10 min-h-screen">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-10">
+                    <div>
+                        <div className="skeleton h-6 w-32 mb-2"></div>
+                        <div className="skeleton h-12 w-96"></div>
+                    </div>
+                    <div className="skeleton h-32 w-[320px] rounded-[30px]"></div>
                 </div>
+                <div className="skeleton h-96 w-full rounded-2xl"></div>
             </div>
         );
     }
@@ -119,7 +123,7 @@ const Insights = () => {
                             <Activity className="text-blue-500 w-5 h-5" />
                             <span className="text-xs font-black uppercase tracking-[0.4em] text-gray-500">Live Comparative Analysis</span>
                         </div>
-                        <h1 className="text-5xl font-black italic tracking-tighter uppercase leading-none">Intelligence <span className="text-blue-500">Insights</span></h1>
+                        <h1 className="text-5xl font-black italic tracking-tighter uppercase leading-none">Intelligence <span className="text-gradient">Insights</span></h1>
                     </div>
 
                     <div className="bg-slate-900/50 backdrop-blur-3xl border border-white/10 rounded-[30px] p-6 flex items-center gap-6 min-w-[320px]">

@@ -113,7 +113,17 @@ const Suggestions = () => {
         setRetryMsg("");
     };
 
-    if (loading) return <div className="h-screen flex items-center justify-center">Analyzing usage patterns...</div>;
+    if (loading) return (
+        <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-12 space-y-10 min-h-screen max-w-5xl">
+            <header className="pb-6 border-b border-white/5">
+                <div className="skeleton h-10 w-64 mb-4"></div>
+                <div className="skeleton h-6 w-96"></div>
+            </header>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[1, 2, 3, 4].map(n => <div key={n} className="skeleton h-64 w-full rounded-2xl"></div>)}
+            </div>
+        </div>
+    );
 
     if (!latestUsage) return (
         <div className="h-screen flex items-center justify-center text-center p-8">
@@ -136,7 +146,7 @@ const Suggestions = () => {
                         Back to Dashboard
                     </button>
                     <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-                        <Zap className="text-yellow-400" /> Reduce My Bill
+                        <Zap className="text-yellow-400" /> <span className="text-gradient">Reduce My Bill</span>
                     </h1>
                     <p className="text-gray-400">Intelligent data-driven suggestions to lower your consumption.</p>
                 </div>

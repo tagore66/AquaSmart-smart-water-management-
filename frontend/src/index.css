@@ -11,15 +11,19 @@
 }
 
 .glass {
-  @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl;
+  @apply bg-white/[0.03] backdrop-blur-xl border border-white/5 shadow-2xl;
 }
 
 .glass-card {
-  @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-xl rounded-2xl p-6 transition-all duration-300 hover:bg-white/10;
+  @apply bg-white/[0.02] backdrop-blur-xl border border-white/5 shadow-2xl rounded-2xl p-6 transition-all duration-300 ease-out;
+}
+
+.glass-card:hover {
+  @apply bg-white/[0.04] border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.2)] -translate-y-[2px] scale-[1.01];
 }
 
 .btn-primary {
-  @apply px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all duration-300 shadow-lg shadow-blue-500/20 active:scale-95;
+  @apply px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] active:scale-95;
 }
 
 .input-field {
@@ -47,4 +51,32 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Premium Enhancements */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 drop-shadow-sm;
+}
+
+.live-indicator {
+  @apply relative flex h-3 w-3;
+}
+.live-indicator span:first-child {
+  @apply animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75;
+}
+.live-indicator span:last-child {
+  @apply relative inline-flex rounded-full h-3 w-3 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)];
+}
+
+/* Skeleton Loading */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  @apply bg-white/5 rounded-xl overflow-hidden relative;
+  background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
 }

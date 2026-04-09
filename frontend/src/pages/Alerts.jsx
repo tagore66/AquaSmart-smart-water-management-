@@ -57,7 +57,17 @@ const Alerts = () => {
         }
     };
 
-    if (loading) return <div className="h-screen flex items-center justify-center text-white pb-20">Monitoring systems...</div>;
+    if (loading) return (
+        <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-10 space-y-10 min-h-screen">
+            <header className="pb-6 border-b border-white/5">
+                <div className="skeleton h-10 w-64 mb-2"></div>
+                <div className="skeleton h-6 w-96"></div>
+            </header>
+            <div className="grid grid-cols-1 gap-6">
+                {[1, 2, 3].map(n => <div key={n} className="skeleton h-32 w-full rounded-2xl"></div>)}
+            </div>
+        </div>
+    );
 
     return (
         <div className="flex bg-slate-950 min-h-screen text-white">
@@ -66,7 +76,7 @@ const Alerts = () => {
             <main className="flex-1 ml-20 md:ml-64 p-6 md:p-10 space-y-10">
                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/5">
                     <div>
-                        <h1 className="text-4xl font-bold mb-2 tracking-tight">Security & Alerts</h1>
+                        <h1 className="text-4xl font-bold mb-2 tracking-tight text-gradient">Security & Alerts</h1>
                         <p className="text-gray-400 text-lg">System monitoring and anomaly detection.</p>
                     </div>
                     <div className={`px-6 py-3 rounded-2xl border flex items-center gap-3 ${getStatusColor()}`}>

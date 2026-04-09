@@ -76,7 +76,17 @@ const Bills = () => {
         }
     };
 
-    if (loading) return <div className="h-screen flex items-center justify-center">Loading Bills...</div>;
+    if (loading) return (
+        <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-12 space-y-10 min-h-screen max-w-5xl">
+            <header className="mb-4">
+                <div className="skeleton h-10 w-64 mb-2"></div>
+                <div className="skeleton h-6 w-96"></div>
+            </header>
+            <div className="space-y-6">
+                {[1, 2, 3].map(n => <div key={n} className="skeleton h-24 w-full rounded-2xl"></div>)}
+            </div>
+        </div>
+    );
 
     return (
         <div className="flex bg-slate-950 min-h-screen text-white">
@@ -87,7 +97,7 @@ const Bills = () => {
                     <ChevronLeft className="w-5 h-5" />
                     Back to Dashboard
                 </button>
-                <h1 className="text-4xl font-bold mb-2">Billing History</h1>
+                <h1 className="text-4xl font-bold mb-2 text-gradient">Billing History</h1>
                 <p className="text-gray-400">View and manage your water bills.</p>
             </header>
 

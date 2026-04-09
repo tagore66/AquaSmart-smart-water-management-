@@ -29,7 +29,15 @@ const UsageHistory = () => {
         fetchHistory();
     }, []);
 
-    if (loading) return <div className="h-screen flex items-center justify-center text-white bg-slate-950">Loading History...</div>;
+    if (loading) return (
+        <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-10 space-y-10 min-h-screen">
+            <header className="pb-6 border-b border-white/5">
+                <div className="skeleton h-10 w-64 mb-4"></div>
+                <div className="skeleton h-6 w-96"></div>
+            </header>
+            <div className="skeleton h-96 w-full rounded-2xl"></div>
+        </div>
+    );
 
     return (
         <div className="flex bg-slate-950 min-h-screen text-white">
@@ -38,7 +46,7 @@ const UsageHistory = () => {
             <main className="flex-1 ml-20 md:ml-64 p-6 md:p-10 space-y-10">
                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/5">
                     <div>
-                        <h1 className="text-4xl font-bold mb-2 tracking-tight">Usage History</h1>
+                        <h1 className="text-4xl font-bold mb-2 tracking-tight text-gradient">Usage History</h1>
                         <p className="text-gray-400 text-lg">Detailed log of all your water consumption entries.</p>
                     </div>
                 </header>

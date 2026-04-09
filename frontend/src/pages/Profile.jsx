@@ -102,7 +102,18 @@ const Profile = () => {
         }
     };
 
-    if (loading) return <div className="h-screen flex items-center justify-center text-white bg-slate-950">Preparing your space...</div>;
+    if (loading) return (
+        <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-10 space-y-10 min-h-screen">
+            <header className="pb-6 border-b border-white/5">
+                <div className="skeleton h-10 w-64 mb-2"></div>
+                <div className="skeleton h-6 w-96"></div>
+            </header>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 skeleton h-96 rounded-2xl"></div>
+                <div className="skeleton h-64 rounded-2xl"></div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="flex bg-slate-950 min-h-screen text-white">
@@ -110,7 +121,7 @@ const Profile = () => {
             
             <main className="flex-1 ml-20 md:ml-64 p-6 md:p-10 space-y-10">
                 <header className="pb-6 border-b border-white/5">
-                    <h1 className="text-4xl font-bold mb-2 tracking-tight">Account Settings</h1>
+                    <h1 className="text-4xl font-bold mb-2 tracking-tight text-gradient">Account Settings</h1>
                     <p className="text-gray-400 text-lg">Manage your identity and security preferences.</p>
                 </header>
 
