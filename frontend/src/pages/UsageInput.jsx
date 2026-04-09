@@ -299,9 +299,32 @@ const UsageInput = () => {
                                                         </div>
                                                     </div>
                                                 )}
-                                                {/* Fallback space for categories without smart inputs */}
-                                                {!['bathing', 'kitchen'].includes(cat.id) && (
-                                                    <div className="h-10 flex items-center italic text-[10px] text-gray-600 font-medium">Auto-calibrating via AI benchmarks...</div>
+                                                {cat.id === 'toilet' && (
+                                                    <Slider 
+                                                        label="Flushes / Person"
+                                                        min={1} 
+                                                        max={10} 
+                                                        value={smartData.flushesPerDay} 
+                                                        onChange={(val) => handleSmartChange('flushesPerDay', val)} 
+                                                    />
+                                                )}
+                                                {cat.id === 'washing' && (
+                                                    <Slider 
+                                                        label="Loads / Week"
+                                                        min={0} 
+                                                        max={10} 
+                                                        value={smartData.washingFreq} 
+                                                        onChange={(val) => handleSmartChange('washingFreq', val)} 
+                                                    />
+                                                )}
+                                                {cat.id === 'gardening' && (
+                                                    <Slider 
+                                                        label="Sessions / Week"
+                                                        min={0} 
+                                                        max={7} 
+                                                        value={smartData.gardeningFreq} 
+                                                        onChange={(val) => handleSmartChange('gardeningFreq', val)} 
+                                                    />
                                                 )}
                                             </div>
                                         )}
