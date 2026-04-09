@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
-const { Resend } = require('resend');
+const Brevo = require('@getbrevo/brevo');
 
 // @desc    Email PDF report to user
 // @route   POST /api/reports/email
@@ -13,36 +13,44 @@ router.post('/email', protect, async (req, res) => {
         return res.status(400).json({ message: 'No PDF data provided' });
     }
 
-    const apiKey = process.env.RESEND_API_KEY;
+    const apiKey = process.env.BREVO_API_KEY;
     if (!apiKey) {
         return res.status(500).json({ message: 'Email service not configured on server' });
     }
 
     try {
-        const resend = new Resend(apiKey);
+        let defaultClient = Brevo.ApiClient.instance;
+        let apiKeyAuth = defaultClient.authentications['api-key'];
+        apiKeyAuth.apiKey = apiKey;
 
-        const { data, error } = await resend.emails.send({
-            from: 'AquaSmart Reports <onboarding@resend.dev>',
-            to: req.user.email,
-            subject: `Water Usage Report - ${weekLabel}`,
-            text: `Hello ${req.user.firstName},\n\nPlease find attached your water usage report for the week of ${weekLabel}.\n\nStay sustainable!\nTeam AquaSmart`,
-            attachments: [
-                {
-                    filename: `AquaSmart_Report_${weekLabel.replace(/ /g, '_')}.pdf`,
-                    content: pdfBase64.split('base64,')[1],
-                }
-            ]
-        });
+        let apiInstance = new Brevo.TransactionalEmailsApi();
+        let sendSmtpEmail = new Brevo.SendSmtpEmail();
 
-        if (error) {
-            console.error('Resend report email error:', error);
-            return res.status(500).json({ message: `Email failed: ${error.message}` });
-        }
+        sendSmtpEmail.subject = `Water Usage Report - ${weekLabel}`;
+        sendSmtpEmail.htmlContent = `
+            <html>
+                <body>
+                    <p>Hello ${req.user.firstName},</p>
+                    <p>Please find attached your water usage report for the week of ${weekLabel}.</p>
+                    <p>Stay sustainable!<br>Team AquaSmart</p>
+                </body>
+            </html>
+        `;
+        sendSmtpEmail.sender = { "name": "AquaSmart Reports", "email": "aquasmart.management@gmail.com" };
+        sendSmtpEmail.to = [{ "email": req.user.email }];
+        
+        // Add PDF attachment
+        sendSmtpEmail.attachments = [{
+            "content": pdfBase64.split('base64,')[1],
+            "name": `AquaSmart_Report_${weekLabel.replace(/ /g, '_')}.pdf`
+        }];
 
-        console.log('Report email sent successfully. ID:', data.id);
+        const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+
+        console.log('Report email sent successfully. ID:', data.messageId);
         res.json({ message: 'Report emailed successfully!' });
     } catch (error) {
-        console.error('Email report error:', error.message);
+        console.error('Email report error:', error.response ? error.response.body : error.message);
         res.status(500).json({ message: `Email failed: ${error.message}` });
     }
 });
