@@ -108,130 +108,60 @@ const Reports = () => {
         setError('');
 
         try {
-            // 1. Create a hidden iframe for ultimate isolation
-            const iframe = document.createElement('iframe');
-            Object.assign(iframe.style, {
-                position: 'fixed',
-                left: '-9999px',
-                top: '0',
-                width: '850px', // Standard report width
-                height: '1200px',
-                border: 'none',
-                visibility: 'hidden'
-            });
-            document.body.appendChild(iframe);
+            const reportElement = reportRef.current;
+            
+            // 1. Prepare for high-quality capture
+            // We capture the visible element directly to ensure all styles and charts match preview exactly.
+            // Using a delay to ensure everything is settled.
+            await new Promise(resolve => setTimeout(resolve, 300));
 
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const reportClone = reportRef.current.cloneNode(true);
-
-            // 2. Setup the iframe environment
-            iframeDoc.open();
-            iframeDoc.write(`
-                <html>
-                    <head>
-                        <style>
-                            * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-                            body { margin: 0; padding: 0; background-color: #0f172a; }
-                            .flex { display: flex; }
-                            .flex-col { flex-direction: column; }
-                            .justify-between { justify-content: space-between; }
-                            .items-center { align-items: center; }
-                            .items-start { align-items: flex-start; }
-                            .grid { display: grid; }
-                            .grid-cols-2 { grid-template-columns: 1fr 1fr; }
-                            .gap-2 { gap: 0.5rem; }
-                            .gap-3 { gap: 0.75rem; }
-                            .gap-4 { gap: 1rem; }
-                            .gap-6 { gap: 1.5rem; }
-                            .gap-8 { gap: 2rem; }
-                            .gap-10 { gap: 2.5rem; }
-                            .gap-12 { gap: 3rem; }
-                            .p-6 { padding: 1.5rem; }
-                            .p-8 { padding: 2rem; }
-                            .p-10 { padding: 2.5rem; }
-                            .pb-10 { padding-bottom: 2.5rem; }
-                            .border-b { border-bottom: 1px solid rgba(255,255,255,0.1); }
-                            .border-t { border-top: 1px solid rgba(255,255,255,0.1); }
-                            .text-white { color: #ffffff; }
-                            .text-xs { font-size: 10px; }
-                            .text-sm { font-size: 14px; }
-                            .text-xl { font-size: 1.25rem; }
-                            .text-2xl { font-size: 1.5rem; }
-                            .text-3xl { font-size: 1.875rem; }
-                            .text-4xl { font-size: 2.25rem; }
-                            .text-6xl { font-size: 3.75rem; }
-                            .font-black { font-weight: 900; }
-                            .font-bold { font-weight: 700; }
-                            .italic { font-style: italic; }
-                            .uppercase { text-transform: uppercase; }
-                            .tracking-tighter { letter-spacing: -0.05em; }
-                            .tracking-tight { letter-spacing: -0.025em; }
-                            .tracking-widest { letter-spacing: 0.1em; }
-                            .opacity-60 { opacity: 0.6; }
-                            .opacity-70 { opacity: 0.7; }
-                            .opacity-50 { opacity: 0.5; }
-                            .rounded-xl { border-radius: 0.75rem; }
-                            .rounded-2xl { border-radius: 1rem; }
-                            .rounded-3xl { border-radius: 1.5rem; }
-                            .rounded-\\[32px\\] { border-radius: 2rem; }
-                            .rounded-\\[40px\\] { border-radius: 2.5rem; }
-                            .overflow-hidden { overflow: hidden; }
-                            .relative { position: relative; }
-                            .z-10 { z-index: 10; }
-                            .w-full { width: 100%; }
-                            .h-full { height: 100%; }
-                            .h-64 { height: 16rem; }
-                        </style>
-                    </head>
-                    <body></body>
-                </html>
-            `);
-            iframeDoc.close();
-            iframeDoc.body.appendChild(reportClone);
-
-            // 3. Wait for layout and images to stabilize
-            await new Promise(resolve => setTimeout(resolve, 800));
-
-            // 4. Capture the iframe content with optimized settings
-            const canvas = await html2canvas(reportClone, {
-                scale: 1.5, // Balanced quality and file size
+            const canvas = await html2canvas(reportElement, {
+                scale: 2, // Higher scale for crisp text and graphics
                 useCORS: true,
-                backgroundColor: '#0f172a',
+                backgroundColor: '#0c111d', // Match the report container background exactly
+                scrollX: 0,
+                scrollY: -window.scrollY, // Correct for page scroll position
+                windowWidth: document.documentElement.offsetWidth,
+                windowHeight: document.documentElement.offsetHeight,
                 logging: false,
-                width: 850,
                 onclone: (clonedDoc) => {
-                    // Final safety sweep for any left-over problematic properties
-                    clonedDoc.querySelectorAll('*').forEach(el => {
-                        if (el.style.color?.includes('oklch')) el.style.color = '#ffffff';
-                        if (el.style.backgroundColor?.includes('oklch')) el.style.backgroundColor = 'transparent';
-                    });
+                    // Force the cloned element to be fully expanded in the virtual capture space
+                    const clonedReport = clonedDoc.querySelector('[data-report-container="true"]');
+                    if (clonedReport) {
+                        clonedReport.style.height = 'auto';
+                        clonedReport.style.maxHeight = 'none';
+                        clonedReport.style.overflow = 'visible';
+                        clonedReport.style.width = '800px'; // Standard width for the report
+                    }
                 }
             });
 
-            // 5. Build PDF from canvas
-            const imgData = canvas.toDataURL('image/jpeg', 0.85); // JPEG at 85% quality for much smaller file size
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            // 2. Build PDF from canvas with dynamic height to prevent cut-offs
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [canvas.width / 2, canvas.height / 2] // Standardize to CSS pixels
+            });
 
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width / 2, canvas.height / 2);
 
-            // 6. Generate a safe filename
+            // 3. Generate a safe filename
             const dateStr = new Date(reportData.weekStarting).toISOString().split('T')[0];
             const safeName = `AquaSmart_Report_${dateStr}.pdf`;
 
-            // 7. Save and trigger modal
+            // 4. Save and trigger modal
             pdf.save(safeName);
+            
+            // Generate clean base64 for the backend
             const base64 = pdf.output('datauristring');
             setLastPdfBase64(base64);
             setShowEmailModal(true);
 
-            // 8. Cleanup
-            document.body.removeChild(iframe);
             return base64;
         } catch (err) {
             console.error('PDF Generation failed:', err);
-            setError(`Report error: ${err.message}`);
+            setError(`Report generation failed: ${err.message}`);
         } finally {
             setGenerating(false);
         }

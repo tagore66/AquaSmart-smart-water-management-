@@ -19,21 +19,30 @@ router.post('/email', protect, async (req, res) => {
     }
 
     try {
+        // More robust base64 cleaning
+        const base64Data = pdfBase64.includes('base64,') 
+            ? pdfBase64.split('base64,')[1] 
+            : pdfBase64;
+
+        console.log(`[ATTACHMENT DEBUG] Size: ${(base64Data.length / 1024).toFixed(2)} KB`);
+
         const response = await axios.post('https://api.brevo.com/v3/smtp/email', {
             sender: { name: "AquaSmart Reports", email: "aquasmart.management@gmail.com" },
             to: [{ email: req.user.email }],
             subject: `Water Usage Report - ${weekLabel}`,
             htmlContent: `
                 <html>
-                    <body>
-                        <p>Hello ${req.user.firstName},</p>
-                        <p>Please find attached your water usage report for the week of ${weekLabel}.</p>
-                        <p>Stay sustainable!<br>Team AquaSmart</p>
+                    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                        <h2 style="color: #2563eb;">Hello ${req.user.firstName},</h2>
+                        <p>Please find attached your comprehensive water usage report for the week of <strong>${weekLabel}</strong>.</p>
+                        <p>This report includes your consumption breakdown, AI-powered conservation tips, and your current billing status.</p>
+                        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                        <p style="font-size: 14px; color: #666;">Stay sustainable!<br><strong>Team AquaSmart</strong></p>
                     </body>
                 </html>
             `,
             attachments: [{
-                content: pdfBase64.split('base64,')[1],
+                content: base64Data,
                 name: `AquaSmart_Report_${weekLabel.replace(/ /g, '_')}.pdf`
             }]
         }, {
