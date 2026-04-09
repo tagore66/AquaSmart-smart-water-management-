@@ -74,7 +74,7 @@ const Signup = () => {
                                     required
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
-                                    placeholder="First name"
+                                    placeholder=""
                                     className="input-field px-4"
                                 />
                             </div>
@@ -87,7 +87,7 @@ const Signup = () => {
                                     required
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
-                                    placeholder="Last name"
+                                    placeholder=""
                                     className="input-field px-4"
                                 />
                             </div>
@@ -102,7 +102,7 @@ const Signup = () => {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Email address"
+                                placeholder=""
                                 className="input-field px-4"
                             />
                         </div>
@@ -116,7 +116,7 @@ const Signup = () => {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Password"
+                                placeholder=""
                                 className="input-field px-4"
                             />
                         </div>
@@ -130,7 +130,7 @@ const Signup = () => {
                                 required
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="Confirm password"
+                                placeholder=""
                                 className="input-field px-4"
                             />
                         </div>

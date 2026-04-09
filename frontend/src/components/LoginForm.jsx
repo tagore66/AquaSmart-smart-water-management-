@@ -53,7 +53,7 @@ const LoginForm = ({ onSuccess, onSwitchToSignup }) => {
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email address"
+                            placeholder=""
                             className="input-field px-4"
                         />
                     </div>
@@ -67,7 +67,7 @@ const LoginForm = ({ onSuccess, onSwitchToSignup }) => {
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Password"
+                            placeholder=""
                             className="input-field px-4"
                         />
                     </div>

@@ -60,15 +60,15 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <label className="text-xs uppercase tracking-widest text-gray-400 font-semibold ml-1">First Name</label>
-                        <input
-                            type="text"
-                            name="firstName"
-                            required
-                            value={formData.firstName}
-                            onChange={handleChange}
-                            placeholder="John"
-                            className="input-field px-4 py-3"
-                        />
+                            <input
+                                type="text"
+                                name="firstName"
+                                required
+                                value={formData.firstName}
+                                onChange={handleChange}
+                                placeholder=""
+                                className="input-field px-4 py-3"
+                            />
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs uppercase tracking-widest text-gray-400 font-semibold ml-1">Last Name</label>
@@ -78,7 +78,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                             required
                             value={formData.lastName}
                             onChange={handleChange}
-                            placeholder="Doe"
+                            placeholder=""
                             className="input-field px-4 py-3"
                         />
                     </div>
@@ -92,7 +92,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="john@example.com"
+                        placeholder=""
                         className="input-field px-4 py-3"
                     />
                 </div>
@@ -106,7 +106,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                             required
                             value={formData.password}
                             onChange={handleChange}
-                            placeholder="••••••••"
+                            placeholder=""
                             className="input-field px-4 py-3"
                         />
                     </div>
@@ -118,7 +118,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                             required
                             value={formData.confirmPassword}
                             onChange={handleChange}
-                            placeholder="••••••••"
+                            placeholder=""
                             className="input-field px-4 py-3"
                         />
                     </div>
