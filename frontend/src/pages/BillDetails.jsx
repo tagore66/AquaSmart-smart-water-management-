@@ -7,47 +7,58 @@ import {
     ChevronLeft, Droplet, Layers, ArrowRight, Loader2 
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 
 const BillDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [bill, setBill] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isPaying, setIsPaying] = useState(false);
-    const [showRazorpay, setShowRazorpay] = useState(false);
-    const [cardNumber, setCardNumber] = useState('');
-    const [expiry, setExpiry] = useState('');
-    const [cvv, setCvv] = useState('');
+    const handlePay = async () => {
+        try {
+            const { data: orderData } = await axios.post(`/bills/${id}/order`);
 
-    useEffect(() => {
-        const fetchBill = async () => {
-            try {
-                const { data } = await axios.get(`/bills/${id}`);
-                setBill(data);
-            } catch (error) {
-                console.error('Error fetching bill details:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBill();
-    }, [id]);
+            const options = {
+                key: orderData.key,
+                amount: orderData.amount,
+                currency: orderData.currency,
+                name: 'AquaSmart',
+                description: 'Water Bill Payment',
+                order_id: orderData.id,
+                handler: async function (response) {
+                    try {
+                        await axios.put(`/bills/${id}/pay`, {
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature
+                        });
+                        const { data } = await axios.get(`/bills/${id}`);
+                        setBill(data);
+                        alert('Payment successful! Your order ID is ' + response.razorpay_order_id);
+                    } catch (err) {
+                        console.error('Payment verification failed:', err);
+                        alert('Payment verification failed.');
+                    }
+                },
+                prefill: {
+                    name: `${user?.firstName} ${user?.lastName}`,
+                    email: user?.email
+                },
+                theme: {
+                    color: '#2563eb'
+                }
+            };
 
-    const handlePayment = async () => {
-        setIsPaying(true);
-        // Simulate a payment gateway delay
-        setTimeout(async () => {
-            try {
-                await axios.put(`/bills/${id}/pay`, { paymentId: 'pay_razor_' + Math.random().toString(36).substr(2, 9) });
-                const { data } = await axios.get(`/bills/${id}`);
-                setBill(data);
-                setShowRazorpay(false);
-            } catch (error) {
-                console.error('Payment error:', error);
-            } finally {
-                setIsPaying(false);
-            }
-        }, 1500);
+            const rzp = new window.Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                alert('Payment failed: ' + response.error.description);
+            });
+            rzp.open();
+        } catch (error) {
+            console.error('Checkout failed:', error);
+            alert('Something went wrong. Please try again.');
+        }
     };
 
     if (loading) return <div className="h-screen flex items-center justify-center">Loading Bill Details...</div>;
@@ -120,7 +131,7 @@ const BillDetails = () => {
 
                     {bill.status === 'Unpaid' ? (
                         <button 
-                            onClick={() => setShowRazorpay(true)}
+                            onClick={handlePay}
                             className="btn-primary w-full py-4 flex items-center justify-center gap-2 mt-auto"
                         >
                             <CreditCard className="w-5 h-5" />
@@ -137,84 +148,6 @@ const BillDetails = () => {
                 </div>
             </div>
 
-            {/* Razorpay Mock Modal */}
-            {showRazorpay && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="glass-card max-w-sm w-full p-0 overflow-hidden border-blue-500/30"
-                    >
-                        <div className="bg-slate-900 p-6 border-b border-white/10 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-600 rounded">
-                                    <IndianRupee className="w-5 h-5 text-white" />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-blue-400 font-bold uppercase">Razorpay Checkout</p>
-                                    <p className="text-lg font-bold">₹{bill.amount}</p>
-                                </div>
-                            </div>
-                            <button onClick={() => setShowRazorpay(false)} className="text-gray-500 hover:text-white">
-                                <ChevronLeft className="w-6 h-6" />
-                            </button>
-                        </div>
-                        
-                        <div className="p-8 space-y-6">
-                            <div className="space-y-4">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 uppercase">Card Number</label>
-                                    <input 
-                                        type="text" 
-                                        placeholder="4242 4242 4242 4242"
-                                        className="input-field py-3 text-lg tracking-widest"
-                                        value={cardNumber}
-                                        onChange={(e) => setCardNumber(e.target.value)}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-500 uppercase">Expiry</label>
-                                        <input 
-                                            type="text" 
-                                            placeholder="MM/YY"
-                                            className="input-field py-3"
-                                            value={expiry}
-                                            onChange={(e) => setExpiry(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-500 uppercase">CVV</label>
-                                        <input 
-                                            type="password" 
-                                            placeholder="•••"
-                                            className="input-field py-3"
-                                            value={cvv}
-                                            onChange={(e) => setCvv(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="p-4 bg-blue-500/5 rounded-xl border border-blue-500/10 flex items-center gap-4 text-sm">
-                                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                <p className="text-gray-400">Securing your transaction with 256-bit encryption.</p>
-                            </div>
-
-                            <button 
-                                onClick={handlePayment}
-                                disabled={isPaying}
-                                className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50"
-                            >
-                                {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Pay ₹{bill.amount}</>}
-                            </button>
-                        </div>
-                        <div className="bg-slate-900/50 p-4 text-center">
-                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Powered by Razorpay Mock</p>
-                        </div>
-                    </motion.div>
-                </div>
-                )}
             </main>
         </div>
     );
