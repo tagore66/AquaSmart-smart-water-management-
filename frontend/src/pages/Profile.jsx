@@ -6,7 +6,9 @@ import {
     ArrowRight, Loader2, Key, Save, Edit3, X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
+import PageWrapper from '../components/layout/PageWrapper';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
 
 const Profile = () => {
     const { user, updateUser } = useAuth();
@@ -102,270 +104,260 @@ const Profile = () => {
         }
     };
 
-    if (loading) return (
-        <div className="flex flex-col ml-0 sm:ml-20 md:ml-64 p-6 md:p-10 pb-28 sm:pb-10 space-y-10 min-h-screen">
-            <header className="pb-6 border-b border-white/5">
-                <div className="skeleton h-10 w-64 mb-2"></div>
-                <div className="skeleton h-6 w-96"></div>
-            </header>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 skeleton h-96 rounded-2xl"></div>
-                <div className="skeleton h-64 rounded-2xl"></div>
-            </div>
-        </div>
-    );
-
     return (
-        <div className="flex bg-slate-950 min-h-screen text-white">
-            <Navbar />
-            
-            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-10 pb-28 sm:pb-10 space-y-10">
-                <header className="pb-6 border-b border-white/5">
-                    <h1 className="text-4xl font-bold mb-2 tracking-tight text-gradient">Account Settings</h1>
-                    <p className="text-gray-400 text-lg">Manage your identity and security preferences.</p>
-                </header>
+        <PageWrapper
+            title="Account Settings"
+            subtitle="Manage your identity and security preferences."
+            loading={loading}
+        >
+            <AnimatePresence>
+                {(error || success) && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className={`p-6 rounded-3xl flex items-center gap-4 border mb-8 ${success ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}
+                    >
+                        {success ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertTriangle className="w-5 h-5 flex-shrink-0" />}
+                        <span className="font-bold tracking-tight">{success || error}</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                <AnimatePresence>
-                    {(error || success) && (
-                        <motion.div 
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className={`p-4 rounded-2xl flex items-center gap-4 border ${success ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}
-                        >
-                            {success ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
-                            <span className="font-semibold">{success || error}</span>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-white">
-                    {/* Public Profile Form */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <section className="glass-card">
-                                <div className="flex items-center justify-between mb-8">
-                                    <h3 className="text-xl font-bold flex items-center gap-3">
-                                        <User className="text-blue-400" /> General Information
-                                    </h3>
-                                    {!isEditing && (
-                                        <button 
-                                            onClick={() => setIsEditing(true)}
-                                            className="flex items-center gap-2 text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors"
-                                        >
-                                            <Edit3 className="w-4 h-4" /> Edit Profile
-                                        </button>
-                                    )}
-                                </div>
-                            
-                            <form onSubmit={handleUpdateProfile} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">First Name</label>
-                                        <input 
-                                            type="text" 
-                                            value={formData.firstName}
-                                            onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                                            className={`input-field ${!isEditing ? 'opacity-70 bg-white/5 cursor-default' : ''}`}
-                                            placeholder="John"
-                                            readOnly={!isEditing}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Last Name</label>
-                                        <input 
-                                            type="text" 
-                                            value={formData.lastName}
-                                            onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                                            className={`input-field ${!isEditing ? 'opacity-70 bg-white/5 cursor-default' : ''}`}
-                                            placeholder="Doe"
-                                            readOnly={!isEditing}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Registered Email (Read Only)</label>
-                                    <input 
-                                        type="email" 
-                                        value={user?.email}
-                                        disabled
-                                        className="input-field opacity-50 cursor-not-allowed"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Recovery Email</label>
-                                    <div className="relative group">
-                                        <input 
-                                            type="email" 
-                                            value={formData.recoveryEmail}
-                                            onChange={(e) => setFormData({...formData, recoveryEmail: e.target.value})}
-                                            className={`input-field ${!isEditing ? 'opacity-70 bg-white/5 cursor-default' : ''}`}
-                                            placeholder="email address"
-                                            readOnly={!isEditing}
-                                        />
-                                    </div>
-                                    <p className="text-[10px] text-gray-500 italic mt-1 ml-1">Used for critical account alerts and password recovery.</p>
-                                </div>
-
-                                {isEditing && (
-                                    <div className="flex justify-end gap-4 pt-4">
-                                        <button 
-                                            type="button"
-                                            onClick={() => setIsEditing(false)}
-                                            className="px-6 py-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-all font-semibold"
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button 
-                                            type="submit" 
-                                            disabled={updating}
-                                            className="btn-primary py-3 px-8 flex items-center gap-2"
-                                        >
-                                            {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-5 h-5" /> Save Changes</>}
-                                        </button>
-                                    </div>
-                                )}
-                            </form>
-                        </section>
-                    </div>
-
-                    {/* Security Card */}
-                    <div className="space-y-8">
-                        <section className="glass-card border-l-4 border-yellow-500/30">
-                            <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-white">
-                                <Shield className="text-yellow-400" /> Security
-                            </h3>
-                            <p className="text-gray-400 text-sm mb-8 leading-relaxed">
-                                Keep your account safe by updating your password regularly. We'll send a verification code to your email.
-                            </p>
-                            
-                            <button 
-                                onClick={() => setShowPasswordModal(true)}
-                                className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all group"
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Public Profile Form */}
+                <Card className="lg:col-span-2 p-10 space-y-8">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-8">
+                        <h3 className="text-2xl font-black italic tracking-tighter flex items-center gap-3">
+                            <User className="text-blue-500" /> GENERAL INFORMATION
+                        </h3>
+                        {!isEditing && (
+                            <Button 
+                                variant="ghost"
+                                onClick={() => setIsEditing(true)}
+                                className="px-5 py-2 text-xs uppercase tracking-widest"
+                                icon={Edit3}
                             >
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-yellow-400/10 rounded-xl group-hover:scale-110 transition-transform">
-                                        <Key className="w-6 h-6 text-yellow-500" />
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="font-bold">Update Password</p>
-                                        <p className="text-[10px] text-gray-500">Requires Email OTP</p>
-                                    </div>
-                                </div>
-                                <ArrowRight className="w-6 h-6 text-gray-600 group-hover:text-white transition-colors" />
-                            </button>
-                        </section>
-
-                        <div className="glass-card bg-blue-500/5 border-blue-500/20 py-10 px-6 text-center">
-                            <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20 mx-auto mb-4">
-                                <CheckCircle2 className="w-8 h-8 text-blue-400" />
-                            </div>
-                            <h4 className="font-bold mb-1">Identity Verified</h4>
-                            <p className="text-xs text-gray-500">Your account is secured with Google OAuth & JWT Encryption.</p>
-                        </div>
+                                Edit Profile
+                            </Button>
+                        )}
                     </div>
+                    
+                    <form onSubmit={handleUpdateProfile} className="space-y-8 pt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">First Name</label>
+                                <input 
+                                    type="text" 
+                                    value={formData.firstName}
+                                    onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                                    className={`w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all text-white placeholder-gray-600 font-medium ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
+                                    placeholder="John"
+                                    readOnly={!isEditing}
+                                />
+                            </div>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Last Name</label>
+                                <input 
+                                    type="text" 
+                                    value={formData.lastName}
+                                    onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                                    className={`w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all text-white placeholder-gray-600 font-medium ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
+                                    placeholder="Doe"
+                                    readOnly={!isEditing}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Registered Email (Immutable)</label>
+                            <input 
+                                type="email" 
+                                value={user?.email}
+                                disabled
+                                className="w-full bg-black/20 border border-white/5 rounded-2xl px-5 py-4 text-gray-500 font-medium cursor-not-allowed"
+                            />
+                        </div>
+
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Recovery Email</label>
+                            <input 
+                                type="email" 
+                                value={formData.recoveryEmail}
+                                onChange={(e) => setFormData({...formData, recoveryEmail: e.target.value})}
+                                className={`w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all text-white placeholder-gray-600 font-medium ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
+                                placeholder="recovery@example.com"
+                                readOnly={!isEditing}
+                            />
+                            <p className="text-[10px] text-gray-500 italic font-medium ml-2">Designated channel for critical infrastructure alerts.</p>
+                        </div>
+
+                        {isEditing && (
+                            <div className="flex justify-end gap-4 pt-8 border-t border-white/5">
+                                <Button 
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() => setIsEditing(false)}
+                                    className="px-8"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button 
+                                    type="submit" 
+                                    disabled={updating}
+                                    className="px-10"
+                                    icon={updating ? Loader2 : Save}
+                                >
+                                    {updating ? 'Encrypting...' : 'Save Changes'}
+                                </Button>
+                            </div>
+                        )}
+                    </form>
+                </Card>
+
+                {/* Security Card */}
+                <div className="space-y-8">
+                    <Card className="p-8 border-l-4 border-l-yellow-500">
+                        <h3 className="text-xl font-black italic tracking-tighter mb-6 flex items-center gap-3">
+                            <Shield className="text-yellow-500" /> SECURITY HUB
+                        </h3>
+                        <p className="text-gray-400 font-medium text-sm mb-8 leading-relaxed">
+                            Maintain core integrity by rotating your credentials. Two-factor authentication required.
+                        </p>
+                        
+                        <Button 
+                            variant="secondary"
+                            onClick={() => setShowPasswordModal(true)}
+                            className="w-full justify-between items-center bg-white/5 hover:bg-yellow-500/10 border-white/5 hover:border-yellow-500/20 py-4 h-auto group"
+                        >
+                            <div className="flex items-center gap-4 text-left">
+                                <div className="p-3 bg-yellow-500/10 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                    <Key className="w-5 h-5 text-yellow-500" />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-gray-200 group-hover:text-yellow-500 transition-colors">Rotate Password</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">Requires Email OTP</p>
+                                </div>
+                            </div>
+                            <ArrowRight className="w-5 h-5 text-gray-600 group-hover:translate-x-1 group-hover:text-yellow-500 transition-all" />
+                        </Button>
+                    </Card>
+
+                    <Card className="p-8 bg-gradient-to-br from-blue-600/10 to-transparent border-blue-500/20 text-center flex flex-col items-center justify-center">
+                        <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20 mb-6 shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+                            <CheckCircle2 className="w-10 h-10 text-blue-400" />
+                        </div>
+                        <h4 className="font-black italic tracking-tighter text-xl mb-2">Identity Verified</h4>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-blue-400/60">OAuth & JWT Encryption Active</p>
+                    </Card>
                 </div>
-            </main>
+            </div>
 
             {/* Password Reset Modal */}
             <AnimatePresence>
                 {showPasswordModal && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl">
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="glass-card max-w-md w-full p-8 space-y-8 relative"
+                            className="glass max-w-md w-full p-10 space-y-8 relative rounded-[3rem] border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]"
                         >
                             <button 
                                 onClick={() => { setShowPasswordModal(false); setOtpSent(false); }}
-                                className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400"
+                                className="absolute top-8 right-8 p-3 hover:bg-white/10 rounded-full transition-all duration-300 text-gray-400 hover:text-white hover:rotate-90"
                             >
-                                <X className="w-6 h-6" />
+                                <X className="w-5 h-5" />
                             </button>
 
-                            <div className="text-center space-y-2">
-                                <div className="w-20 h-20 bg-yellow-400/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div className="text-center space-y-4">
+                                <div className="w-24 h-24 bg-yellow-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 ring-8 ring-yellow-500/5">
                                     <Key className="w-10 h-10 text-yellow-500" />
                                 </div>
-                                <h2 className="text-2xl font-bold">Secure Password Reset</h2>
-                                <p className="text-gray-400 text-sm px-6">
+                                <h2 className="text-2xl font-black italic tracking-tighter uppercase relative">
+                                    Admin Override
+                                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-yellow-500 rounded-full"></div>
+                                </h2>
+                                <p className="text-gray-400 font-medium leading-relaxed italic text-sm mt-4">
                                     {otpSent 
-                                        ? "Validation code has been sent. Check your inbox."
-                                        : "Protect your account. We'll send you an OTP to verify your identity."}
+                                        ? "Validation token dispatched. Intercept and verify."
+                                        : "Initiate secure credential rotation. OTP required."}
                                 </p>
                             </div>
 
                             {!otpSent ? (
-                                <button 
+                                <Button 
                                     onClick={handleSendOTP}
                                     disabled={otpLoading}
-                                    className="btn-primary w-full py-4 flex items-center justify-center gap-3"
+                                    className="w-full py-5 mt-8 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.5)]"
+                                    icon={otpLoading ? Loader2 : Key}
                                 >
-                                    {otpLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Send Verification Code <ArrowRight className="w-5 h-5" /></>}
-                                </button>
+                                    {otpLoading ? 'Generating...' : 'Request Validation Token'}
+                                </Button>
                             ) : (
-                                <form onSubmit={handleResetPassword} className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">OTP from Email</label>
+                                <form onSubmit={handleResetPassword} className="space-y-8 mt-8">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Authorization Token</label>
                                         <input 
                                             type="text" 
                                             maxLength="6"
                                             value={otp}
                                             onChange={(e) => setOtp(e.target.value)}
-                                            className="input-field text-center text-2xl tracking-[10px] font-mono"
+                                            className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-yellow-500/50 focus:bg-yellow-500/5 text-center text-3xl tracking-[0.5em] font-mono text-yellow-400 placeholder-white/10 transition-all font-black"
                                             placeholder="000000"
                                             required
                                         />
                                     </div>
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">New Password</label>
+                                    <div className="space-y-6">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">New Core Cipher</label>
                                             <input 
                                                 type="password" 
                                                 value={newPassword}
                                                 onChange={(e) => setNewPassword(e.target.value)}
-                                                className="input-field"
+                                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 text-center text-2xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/10"
                                                 placeholder="••••••••"
                                                 required
                                             />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Confirm New Password</label>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Verify Core Cipher</label>
                                             <input 
                                                 type="password" 
                                                 value={confirmPassword}
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                                className="input-field"
+                                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 text-center text-2xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/10 relative"
                                                 placeholder="••••••••"
                                                 required
                                             />
                                         </div>
                                     </div>
-                                    <button 
-                                        type="submit" 
-                                        disabled={updating}
-                                        className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all"
-                                    >
-                                        {updating ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Update Password</>}
-                                    </button>
-                                    <p className="text-center">
-                                        <button 
-                                            type="button"
-                                            onClick={handleSendOTP}
-                                            className="text-xs text-blue-400 hover:underline"
+                                    <div className="space-y-4 pt-4">
+                                        <Button 
+                                            type="submit" 
+                                            disabled={updating}
+                                            className="w-full py-5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.5)]"
+                                            icon={updating ? Loader2 : Save}
                                         >
-                                            Resend Verification Code
-                                        </button>
-                                    </p>
+                                            {updating ? 'Encrypting...' : 'Confirm Override'}
+                                        </Button>
+                                        <div className="text-center">
+                                            <button 
+                                                type="button"
+                                                onClick={handleSendOTP}
+                                                className="text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors py-2"
+                                            >
+                                                Resend Validation Token
+                                            </button>
+                                        </div>
+                                    </div>
                                 </form>
                             )}
                         </motion.div>
                     </div>
                 )}
             </AnimatePresence>
-        </div>
+        </PageWrapper>
     );
 };
 

@@ -4,11 +4,28 @@ import {
     LayoutDashboard, Plus, History, Bell, Zap, LogOut, Droplet, User, FileText, BarChart3
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
 
 const NavLink = ({ to, icon: Icon, label, active }) => (
-    <Link to={to} className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all group ${active ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}>
-        <Icon className="w-6 h-6" />
-        <span className="hidden md:block font-semibold">{label}</span>
+    <Link to={to} className="relative group block">
+        <motion.div 
+            whileHover={{ x: 4 }}
+            className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                active 
+                ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]' 
+                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+            }`}
+        >
+            <Icon className={`w-6 h-6 transition-transform duration-300 group-hover:scale-110 ${active ? 'text-blue-400' : ''}`} />
+            <span className="hidden md:block font-bold tracking-tight">{label}</span>
+            {active && (
+                <motion.div 
+                    layoutId="active-nav"
+                    className="absolute left-0 w-1 h-6 bg-blue-500 rounded-full"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                />
+            )}
+        </motion.div>
     </Link>
 );
 

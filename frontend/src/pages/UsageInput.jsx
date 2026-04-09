@@ -8,7 +8,10 @@ import {
     Settings2, BrainCircuit, AlertTriangle, CheckCircle2, ShieldCheck
 } from 'lucide-react';
 import axios from 'axios';
-import Navbar from '../components/Navbar';
+import PageWrapper from '../components/layout/PageWrapper';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import AnimatedNumber from '../components/ui/AnimatedNumber';
 
 const categories = [
     { id: 'bathing', name: 'Bathing', icon: Bath, color: 'text-blue-400', bg: 'bg-blue-400/10' },
@@ -22,7 +25,7 @@ const UsageInput = () => {
     const [step, setStep] = useState(1);
     const [numPeople, setNumPeople] = useState(1);
     const [weekStarting, setWeekStarting] = useState(new Date().toISOString().split('T')[0]);
-    const [inputMode, setInputMode] = useState('smart'); // 'manual' or 'smart'
+    const [inputMode, setInputMode] = useState('smart');
     const [smartData, setSmartData] = useState({
         showersPerDay: 1,
         showerDuration: 5,
@@ -46,7 +49,6 @@ const UsageInput = () => {
     const nextStep = () => setStep(s => s + 1);
     const prevStep = () => setStep(s => s - 1);
 
-    // Auto-calculate for Smart Mode
     useEffect(() => {
         if (inputMode === 'smart') {
             const bathing = numPeople * smartData.showersPerDay * smartData.showerDuration * 15 * 7;
@@ -72,10 +74,9 @@ const UsageInput = () => {
 
     const totalLiters = Object.values(usageData).reduce((a, b) => a + b, 0);
 
-    // Intelligence Layer Logic
     const intelligence = useMemo(() => {
         const litersPerPersonPerWeek = totalLiters / numPeople;
-        const avgLiters = 135 * 7; // Average weekly liters per person (Indian context)
+        const avgLiters = 135 * 7;
         
         let status = 'Ideal';
         let color = 'text-green-400';
@@ -115,7 +116,7 @@ const UsageInput = () => {
                 setShowNotification(false);
                 setTimeout(() => {
                     navigate('/dashboard');
-                }, 500); // Allow time for toast exit animation
+                }, 500);
             }, 3000);
         } catch (error) {
             console.error('Error saving usage:', error);
@@ -125,47 +126,40 @@ const UsageInput = () => {
         }
     };
 
-
     return (
-        <div className="flex bg-slate-950 min-h-screen text-white">
-            <Navbar />
-            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-12 max-w-4xl space-y-8 relative">
-                <AnimatePresence>
+        <PageWrapper
+            title="Weekly Usage"
+            subtitle={`Step ${step} of 2: ${step === 1 ? 'General Info' : 'Category Breakdown'}`}
+            actions={
+                <div className="hidden md:block">
+                    <Card hover={false} className="py-2 px-6 flex items-center gap-4 bg-white/5 border-white/10">
+                        <Droplet className="text-blue-400" />
+                        <span className="font-black text-3xl">
+                            <AnimatedNumber value={totalLiters} />
+                            <span className="text-sm font-bold text-gray-500 ml-1">L</span>
+                        </span>
+                    </Card>
+                </div>
+            }
+        >
+            <AnimatePresence>
                 {showNotification && (
                     <motion.div
                         initial={{ opacity: 0, y: -20, x: 20 }}
                         animate={{ opacity: 1, y: 0, x: 0 }}
                         exit={{ opacity: 0, y: -20, x: 20 }}
-                        className="fixed top-6 right-6 z-50 bg-[#1e293b]/90 backdrop-blur-xl border border-white/20 p-4 rounded-2xl flex items-center gap-4 shadow-[0_8px_30px_rgb(0,0,0,0.5)]"
+                        className="fixed top-6 right-6 z-50 glass p-6 rounded-[2rem] flex items-center gap-4 shadow-[0_20px_40px_rgba(0,0,0,0.5)] border-white/20"
                     >
-                        <div className="bg-green-500/20 p-2 rounded-full">
+                        <div className="bg-green-500/20 p-3 rounded-full">
                             <CheckCircle2 className="w-6 h-6 text-green-400" />
                         </div>
-                        <div className="pr-2">
-                            <h4 className="font-bold text-white text-sm">Data Saved Successfully!</h4>
-                            <p className="text-xs text-gray-300">Your weekly report has been sent to your email.</p>
+                        <div>
+                            <h4 className="font-bold text-white">Data Saved Successfully!</h4>
+                            <p className="text-xs text-gray-400">Your report has been generated.</p>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            <div className="mb-12 flex items-center justify-between">
-                <div>
-                    <button onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 mb-4">
-                        <ChevronLeft className="w-5 h-5" />
-                        Back to Dashboard
-                    </button>
-                    <h1 className="text-4xl font-bold mb-2">Weekly Usage</h1>
-                    <p className="text-gray-400">Step {step} of 2: {step === 1 ? 'General Info' : 'Category Breakdown'}</p>
-                </div>
-                <div className="hidden md:block">
-                    <div className="glass-card py-2 px-4 flex items-center gap-3">
-                        <Droplet className="text-blue-400" />
-                        <span className="font-bold text-2xl">{totalLiters}L</span>
-                        <span className="text-sm text-gray-400">Total</span>
-                    </div>
-                </div>
-            </div>
 
             <AnimatePresence mode="wait">
                 {step === 1 ? (
@@ -177,43 +171,46 @@ const UsageInput = () => {
                         className="space-y-8"
                     >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="glass-card space-y-6">
-                                <div className="flex items-center gap-4 mb-2">
-                                    <div className="p-3 bg-blue-500/20 rounded-xl"><Users className="text-blue-400" /></div>
-                                    <h3 className="text-xl font-semibold">Household Size</h3>
+                            <Card className="space-y-6">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/10"><Users className="text-blue-400" /></div>
+                                    <div>
+                                        <h3 className="text-xl font-bold tracking-tight">Household Size</h3>
+                                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Residents Count</p>
+                                    </div>
                                 </div>
-                                <p className="text-gray-400 text-sm">Number of people living in the house.</p>
-                                <div className="flex items-center gap-6">
+                                <div className="flex items-center gap-8">
                                     <input 
                                         type="range" min="1" max="10" 
                                         value={numPeople} 
                                         onChange={(e) => setNumPeople(parseInt(e.target.value))}
-                                        className="flex-1 accent-blue-500"
+                                        className="flex-1 accent-blue-500 h-2 bg-white/5 rounded-lg appearance-none cursor-pointer"
                                     />
-                                    <span className="text-3xl font-bold w-12 text-center">{numPeople}</span>
+                                    <span className="text-4xl font-black w-14 text-center text-gradient leading-none">{numPeople}</span>
                                 </div>
-                            </div>
+                            </Card>
 
-                            <div className="glass-card space-y-6">
-                                <div className="flex items-center gap-4 mb-2">
-                                    <div className="p-3 bg-purple-500/20 rounded-xl"><Calendar className="text-purple-400" /></div>
-                                    <h3 className="text-xl font-semibold">Week Starting</h3>
+                            <Card className="space-y-6">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-4 bg-purple-500/10 rounded-2xl border border-purple-500/10"><Calendar className="text-purple-400" /></div>
+                                    <div>
+                                        <h3 className="text-xl font-bold tracking-tight">Week Starting</h3>
+                                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Tracking Period</p>
+                                    </div>
                                 </div>
-                                <p className="text-gray-400 text-sm">Select the Sunday of the tracking week.</p>
                                 <input 
                                     type="date" 
                                     value={weekStarting}
                                     onChange={(e) => setWeekStarting(e.target.value)}
                                     className="input-field"
                                 />
-                            </div>
+                            </Card>
                         </div>
 
-                        <div className="flex justify-end">
-                            <button onClick={nextStep} className="btn-primary flex items-center gap-2 group">
-                                Next Step
-                                <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
+                        <div className="flex justify-end pt-4">
+                            <Button onClick={nextStep} icon={ChevronRight}>
+                                Next Phase
+                            </Button>
                         </div>
                     </motion.div>
                 ) : (
@@ -224,85 +221,70 @@ const UsageInput = () => {
                         exit={{ opacity: 0, x: -20 }}
                         className="space-y-8"
                     >
-                        {/* Mode Toggle */}
-                        <div className="flex justify-center mb-8">
-                            <div className="glass-card p-1.5 flex items-center gap-2 rounded-2xl bg-white/5 border border-white/10">
+                        <div className="flex justify-center mb-10">
+                            <div className="glass p-2 flex items-center gap-2 rounded-[2rem]">
                                 <button 
                                     onClick={() => setInputMode('smart')}
-                                    className={`px-6 py-2.5 rounded-xl transition-all flex items-center gap-2 ${inputMode === 'smart' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-white'}`}
+                                    className={`px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2 ${inputMode === 'smart' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
                                 >
                                     <BrainCircuit className="w-5 h-5" />
                                     Smart Estimate
                                 </button>
                                 <button 
                                     onClick={() => setInputMode('manual')}
-                                    className={`px-6 py-2.5 rounded-xl transition-all flex items-center gap-2 ${inputMode === 'manual' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-white'}`}
+                                    className={`px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2 ${inputMode === 'manual' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
                                 >
                                     <Settings2 className="w-5 h-5" />
-                                    Manual Input
+                                    Manual Logic
                                 </button>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {categories.map((cat) => (
-                                <div key={cat.id} className="glass-card space-y-4">
+                            {categories.map((cat, idx) => (
+                                <Card key={cat.id} delay={idx * 0.05} className="space-y-6">
                                     <div className="flex items-center justify-between">
-                                        <div className={`p-2 ${cat.bg} rounded-lg`}>
+                                        <div className={`p-4 ${cat.bg} rounded-2xl border border-white/5`}>
                                             <cat.icon className={`w-6 h-6 ${cat.color}`} />
                                         </div>
                                         <div className="text-right">
-                                            <span className="text-xl font-bold block">{usageData[cat.id]}L</span>
-                                            <span className="text-[10px] text-gray-500 uppercase tracking-wider">Liters/Week</span>
+                                            <span className="text-2xl font-black block">
+                                                <AnimatedNumber value={usageData[cat.id]} />L
+                                            </span>
+                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Wk Total</span>
                                         </div>
                                     </div>
-                                    <h4 className="font-semibold">{cat.name}</h4>
+                                    <h4 className="font-bold text-lg tracking-tight">{cat.name}</h4>
                                     
                                     {inputMode === 'manual' ? (
                                         <input 
                                             type="range" min="0" max="1000" step="10"
                                             value={usageData[cat.id]} 
                                             onChange={(e) => handleInputChange(cat.id, e.target.value)}
-                                            className={`w-full accent-blue-500 cursor-pointer`}
+                                            className="w-full accent-blue-500 h-2 bg-white/5 rounded-lg appearance-none cursor-pointer"
                                         />
                                     ) : (
-                                        <div className="space-y-4 pt-2">
+                                        <div className="space-y-6 pt-2">
                                             {cat.id === 'bathing' && (
                                                 <>
-                                                    <div className="space-y-2">
-                                                        <p className="text-[10px] text-gray-400 uppercase">Showers per Person / Day</p>
-                                                        <div className="flex items-center gap-3">
-                                                            <input type="range" min="1" max="4" value={smartData.showersPerDay} onChange={(e) => handleSmartChange('showersPerDay', parseInt(e.target.value))} className="flex-1 accent-blue-500"/>
-                                                            <span className="text-sm font-bold w-4">{smartData.showersPerDay}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <p className="text-[10px] text-gray-400 uppercase">Duration (Minutes)</p>
-                                                        <div className="flex items-center gap-3">
-                                                            <input type="range" min="1" max="30" value={smartData.showerDuration} onChange={(e) => handleSmartChange('showerDuration', parseInt(e.target.value))} className="flex-1 accent-blue-500"/>
-                                                            <span className="text-sm font-bold w-4">{smartData.showerDuration}</span>
+                                                    <div className="space-y-3">
+                                                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Showers / Person</p>
+                                                        <div className="flex items-center gap-4">
+                                                            <input type="range" min="1" max="4" value={smartData.showersPerDay} onChange={(e) => handleSmartChange('showersPerDay', parseInt(e.target.value))} className="flex-1 accent-blue-500 h-1.5 bg-white/5 lg:bg-transparent rounded-lg appearance-none cursor-pointer"/>
+                                                            <span className="text-xl font-bold text-blue-400 w-4">{smartData.showersPerDay}</span>
                                                         </div>
                                                     </div>
                                                 </>
                                             )}
-                                            {cat.id === 'toilet' && (
-                                                <div className="space-y-2">
-                                                    <p className="text-[10px] text-gray-400 uppercase">Flushes per Person / Day</p>
-                                                    <div className="flex items-center gap-3">
-                                                        <input type="range" min="1" max="10" value={smartData.flushesPerDay} onChange={(e) => handleSmartChange('flushesPerDay', parseInt(e.target.value))} className="flex-1 accent-blue-500"/>
-                                                        <span className="text-sm font-bold w-4">{smartData.flushesPerDay}</span>
-                                                    </div>
-                                                </div>
-                                            )}
                                             {cat.id === 'kitchen' && (
-                                                <div className="space-y-2">
-                                                    <p className="text-[10px] text-gray-400 uppercase">Frequency Level</p>
+                                                <div className="space-y-3">
+                                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Intensity Level</p>
                                                     <div className="flex items-center gap-2">
                                                         {['Low', 'Medium', 'High'].map(f => (
                                                             <button 
                                                                 key={f}
                                                                 onClick={() => handleSmartChange('kitchenFreq', f)}
-                                                                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-all ${smartData.kitchenFreq === f ? 'bg-green-500/10 border-green-500/50 text-green-400' : 'border-white/10 text-gray-400'}`}
+                                                                className={`flex-1 py-2 rounded-xl text-[10px] font-black tracking-widest uppercase border transition-all ${smartData.kitchenFreq === f ? 'bg-blue-600/10 border-blue-500/50 text-blue-400' : 'border-white/10 text-gray-500'}`}
                                                             >
                                                                 {f}
                                                             </button>
@@ -310,80 +292,59 @@ const UsageInput = () => {
                                                     </div>
                                                 </div>
                                             )}
-                                            {cat.id === 'washing' && (
-                                                <div className="space-y-2">
-                                                    <p className="text-[10px] text-gray-400 uppercase">Loads / Week</p>
-                                                    <div className="flex items-center gap-3">
-                                                        <input type="range" min="0" max="15" value={smartData.washingFreq} onChange={(e) => handleSmartChange('washingFreq', parseInt(e.target.value))} className="flex-1 accent-blue-500"/>
-                                                        <span className="text-sm font-bold w-4">{smartData.washingFreq}</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {cat.id === 'gardening' && (
-                                                <div className="space-y-2">
-                                                    <p className="text-[10px] text-gray-400 uppercase">Sessions / Week</p>
-                                                    <div className="flex items-center gap-3">
-                                                        <input type="range" min="0" max="14" value={smartData.gardeningFreq} onChange={(e) => handleSmartChange('gardeningFreq', parseInt(e.target.value))} className="flex-1 accent-blue-500"/>
-                                                        <span className="text-sm font-bold w-4">{smartData.gardeningFreq}</span>
-                                                    </div>
-                                                </div>
-                                            )}
                                         </div>
                                     )}
-                                </div>
+                                </Card>
                             ))}
                         </div>
 
-                        {/* Intelligence Layer UI */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="glass-card md:col-span-2 flex items-start gap-4 border-l-4 border-l-blue-500">
-                                <div className={`p-3 rounded-xl bg-opacity-10 ${intelligence.color.replace('text', 'bg')}`}>
-                                    <AlertTriangle className={`w-6 h-6 ${intelligence.color}`} />
+                            <Card delay={0.4} className="md:col-span-2 flex items-start gap-6 border-l-4 border-l-blue-500">
+                                <div className={`p-4 rounded-2xl ${intelligence.color.replace('text', 'bg').replace('400', '400/10')}`}>
+                                    <BrainCircuit className={`w-8 h-8 ${intelligence.color}`} />
                                 </div>
-                                <div className="space-y-1">
-                                    <h5 className={`font-bold ${intelligence.color}`}>AI Status: {intelligence.status}</h5>
-                                    <p className="text-gray-400 text-sm">{intelligence.message}</p>
+                                <div className="space-y-2">
+                                    <h5 className={`text-xl font-bold tracking-tight ${intelligence.color}`}>AI Review: {intelligence.status}</h5>
+                                    <p className="text-gray-400 italic">"{intelligence.message}"</p>
                                 </div>
-                            </div>
-                            <div className="glass-card flex items-center justify-between">
+                            </Card>
+                            <Card delay={0.5} className="flex flex-col justify-center gap-4 items-center text-center">
                                 <div className="space-y-1">
-                                    <p className="text-[10px] text-gray-400 uppercase">Data Confidence</p>
-                                    <h5 className="font-bold flex items-center gap-2">
-                                        {intelligence.confidence === 'High' ? <ShieldCheck className="w-5 h-5 text-green-400" /> : <Loader2 className="w-5 h-5 text-yellow-400" />}
-                                        {intelligence.confidence}
+                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Confidence Score</p>
+                                    <h5 className="font-black text-2xl flex items-center gap-2 justify-center">
+                                        <ShieldCheck className="w-6 h-6 text-blue-400" />
+                                        {intelligence.confidence.toUpperCase()}
                                     </h5>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-[10px] text-gray-400 uppercase">Weekly Rank</p>
-                                    <span className="text-lg font-bold text-blue-400">#12 Eco-Smart</span>
-                                </div>
-                            </div>
+                            </Card>
                         </div>
 
-                        <div className="flex justify-between items-center bg-white bg-opacity-5 p-6 rounded-2xl border border-white border-opacity-10">
-                            <button onClick={prevStep} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
-                                <ChevronLeft className="w-5 h-5" />
-                                Back
-                            </button>
-                            <div className="flex items-center gap-6">
+                        <Card className="flex flex-col md:flex-row justify-between items-center gap-6 mt-10 p-10 bg-gradient-to-br from-white/5 to-transparent">
+                            <Button variant="ghost" onClick={prevStep} icon={ChevronLeft}>
+                                Previous Phase
+                            </Button>
+                            <div className="flex items-center gap-10">
                                 <div className="hidden md:block text-right">
-                                    <p className="text-sm text-gray-400">Calculated Total</p>
-                                    <p className="text-2xl font-bold">{totalLiters} Liters</p>
+                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">AGGREGATE TOTAL</p>
+                                    <p className="text-4xl font-black italic">
+                                        <AnimatedNumber value={totalLiters} /> <span className="text-sm font-bold text-gray-600">Liters</span>
+                                    </p>
                                 </div>
-                                <button 
+                                <Button 
                                     onClick={handleSubmit} 
                                     disabled={loading}
-                                    className="btn-primary py-4 px-10 flex items-center gap-2 text-lg"
+                                    variant="primary"
+                                    className="px-12 py-5 text-xl"
+                                    icon={loading ? Loader2 : Save}
                                 >
-                                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-8 h-8" /> Save Weekly Data</>}
-                                </button>
+                                    {loading ? 'Encrypting...' : 'Save Lifecycle Data'}
+                                </Button>
                             </div>
-                        </div>
+                        </Card>
                     </motion.div>
                 )}
             </AnimatePresence>
-            </main>
-        </div>
+        </PageWrapper>
     );
 };
 

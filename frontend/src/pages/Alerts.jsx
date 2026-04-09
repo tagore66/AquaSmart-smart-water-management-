@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { 
-    AlertTriangle, Bell, CheckCircle, Info, 
-    ChevronRight, Calendar, Trash2, Shield,
-    Droplet, TrendingUp, Activity
+    AlertTriangle, CheckCircle, ChevronRight, Droplet, Shield, Activity, Bell
 } from 'lucide-react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
-
+import PageWrapper from '../components/layout/PageWrapper';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
 
 const Alerts = () => {
     const [alerts, setAlerts] = useState([]);
@@ -22,7 +19,6 @@ const Alerts = () => {
                 const response = await axios.get('/alerts');
                 setAlerts(response.data);
                 
-                // Determine status
                 const activeAlerts = response.data.filter(a => !a.isRead && a.severity === 'high');
                 if (activeAlerts.length > 0) {
                     setStatus('Risk');
@@ -49,108 +45,107 @@ const Alerts = () => {
         }
     };
 
-    const getStatusColor = () => {
+    const getStatusStyles = () => {
         switch(status) {
-            case 'Risk': return 'text-red-400 border-red-500/20 bg-red-500/5';
-            case 'Warning': return 'text-yellow-400 border-yellow-500/20 bg-yellow-500/5';
-            default: return 'text-green-400 border-green-500/20 bg-green-500/5';
+            case 'Risk': return 'text-red-400 border-red-500/20 bg-red-500/5 shadow-[0_0_20px_rgba(239,68,68,0.1)]';
+            case 'Warning': return 'text-yellow-400 border-yellow-500/20 bg-yellow-500/5 shadow-[0_0_20px_rgba(234,179,8,0.1)]';
+            default: return 'text-green-400 border-green-500/20 bg-green-500/5 shadow-[0_0_20px_rgba(34,197,94,0.1)]';
         }
     };
 
-    if (loading) return (
-        <div className="flex flex-col ml-0 sm:ml-20 md:ml-64 p-6 md:p-10 pb-28 sm:pb-10 space-y-10 min-h-screen">
-            <header className="pb-6 border-b border-white/5">
-                <div className="skeleton h-10 w-64 mb-2"></div>
-                <div className="skeleton h-6 w-96"></div>
-            </header>
-            <div className="grid grid-cols-1 gap-6">
-                {[1, 2, 3].map(n => <div key={n} className="skeleton h-32 w-full rounded-2xl"></div>)}
-            </div>
-        </div>
-    );
-
     return (
-        <div className="flex bg-slate-950 min-h-screen text-white">
-            <Navbar />
-            
-            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-10 pb-28 sm:pb-10 space-y-10">
-                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/5">
-                    <div>
-                        <h1 className="text-4xl font-bold mb-2 tracking-tight text-gradient">Security & Alerts</h1>
-                        <p className="text-gray-400 text-lg">System monitoring and anomaly detection.</p>
-                    </div>
-                    <div className={`px-6 py-3 rounded-2xl border flex items-center gap-3 ${getStatusColor()}`}>
-                        {status === 'Healthy' ? <CheckCircle className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
-                        <span className="font-bold tracking-wider uppercase">System Status: {status}</span>
-                    </div>
-                </header>
-
-                <div className="grid grid-cols-1 gap-6">
-                    <AnimatePresence>
-                        {alerts.length === 0 ? (
-                            <motion.div 
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="glass-card flex flex-col items-center justify-center p-20 text-center space-y-6"
-                            >
-                                <div className="p-6 bg-green-500/10 rounded-full">
-                                    <Shield className="w-16 h-16 text-green-400" />
-                                </div>
-                                <div className="max-w-md">
-                                    <h2 className="text-2xl font-bold mb-2">No Active Threats</h2>
-                                    <p className="text-gray-400 mb-8">Your water management system is running smoothly. No leaks or high usage detected.</p>
-                                </div>
-                            </motion.div>
-                        ) : (
-                            alerts.map((alert, idx) => (
-                                <motion.div 
-                                    key={alert._id}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: idx * 0.1 }}
-                                    className={`glass-card p-6 flex items-start gap-6 border-l-4 ${
-                                        alert.isRead ? 'opacity-60 border-gray-500' : 
-                                        alert.severity === 'high' ? 'border-red-500' : 'border-yellow-500'
-                                    }`}
-                                >
-                                    <div className={`p-4 rounded-2xl ${
-                                        alert.type === 'leak' ? 'bg-red-500/10' : 'bg-yellow-500/10'
-                                    }`}>
-                                        {alert.type === 'leak' ? (
-                                            <Droplet className={`w-8 h-8 ${alert.isRead ? 'text-gray-400' : 'text-red-400'}`} />
-                                        ) : (
-                                            <AlertTriangle className={`w-8 h-8 ${alert.isRead ? 'text-gray-400' : 'text-yellow-400'}`} />
-                                        )}
-                                    </div>
-
-                                    <div className="flex-1 space-y-1">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className={`text-xl font-bold ${alert.isRead ? 'text-gray-400' : 'text-white'}`}>
-                                                {alert.title}
-                                            </h3>
-                                            <span className="text-sm text-gray-500">
-                                                {new Date(alert.createdAt).toLocaleString()}
-                                            </span>
-                                        </div>
-                                        <p className="text-gray-400 leading-relaxed max-w-2xl">
-                                            {alert.message}
-                                        </p>
-                                        {!alert.isRead && (
-                                            <button 
-                                                onClick={() => markAsRead(alert._id)}
-                                                className="mt-4 text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 group"
-                                            >
-                                                Mark as resolved <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                            </button>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            ))
-                        )}
-                    </AnimatePresence>
+        <PageWrapper
+            title="Security & Alerts"
+            subtitle="Real-time system monitoring and anomaly detection engine."
+            loading={loading}
+            actions={
+                <div className={`px-8 py-3 rounded-full border flex items-center gap-3 transition-all duration-700 ${getStatusStyles()}`}>
+                    {status === 'Healthy' ? <CheckCircle className="w-5 h-5" /> : <AlertTriangle className={`w-5 h-5 ${status === 'Risk' ? 'animate-pulse' : ''}`} />}
+                    <span className="font-black tracking-[0.2em] uppercase text-[10px]">Guard: {status}</span>
                 </div>
-            </main>
-        </div>
+            }
+        >
+            <div className="grid grid-cols-1 gap-6">
+                <AnimatePresence mode="popLayout">
+                    {alerts.length === 0 && !loading ? (
+                        <Card className="flex flex-col items-center justify-center py-40 text-center space-y-8 animate-in fade-in zoom-in duration-700">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-green-500/20 blur-3xl rounded-full"></div>
+                                <div className="relative p-10 bg-white/5 rounded-[3rem] border border-white/10">
+                                    <Shield className="w-20 h-20 text-green-400" />
+                                </div>
+                                <motion.div 
+                                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                    transition={{ repeat: Infinity, duration: 3 }}
+                                    className="absolute -top-4 -right-4 p-3 bg-green-500/20 rounded-full"
+                                >
+                                    <CheckCircle className="w-6 h-6 text-green-400" />
+                                </motion.div>
+                            </div>
+                            <div className="max-w-md space-y-4">
+                                <h2 className="text-3xl font-black italic tracking-tighter uppercase">No Active Threats</h2>
+                                <p className="text-gray-500 font-medium leading-relaxed italic">"The core infrastructure is currently operating within optimal parameters. High-fidelity sensors report zero anomalies."</p>
+                            </div>
+                        </Card>
+                    ) : (
+                        alerts.map((alert, idx) => (
+                            <Card 
+                                key={alert._id}
+                                delay={idx * 0.1}
+                                className={`p-8 flex items-start gap-8 transition-all duration-500 ${
+                                    alert.isRead ? 'opacity-40 grayscale-[0.5]' : 
+                                    alert.severity === 'high' ? 'border-l-red-500/50 bg-gradient-to-r from-red-500/5 to-transparent' : 'border-l-yellow-500/50 bg-gradient-to-r from-yellow-500/5 to-transparent'
+                                }`}
+                            >
+                                <div className={`p-5 rounded-[2rem] border transition-all duration-500 ${
+                                    alert.isRead ? 'bg-white/5 border-white/5' :
+                                    alert.type === 'leak' ? 'bg-red-500/10 border-red-500/20' : 'bg-yellow-500/10 border-yellow-500/20'
+                                }`}>
+                                    {alert.type === 'leak' ? (
+                                        <Droplet className={`w-10 h-10 ${alert.isRead ? 'text-gray-500' : 'text-red-400'}`} />
+                                    ) : (
+                                        <AlertTriangle className={`w-10 h-10 ${alert.isRead ? 'text-gray-500' : 'text-yellow-400'}`} />
+                                    )}
+                                </div>
+
+                                <div className="flex-1 space-y-4">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div>
+                                            <h3 className={`text-2xl font-black italic tracking-tight ${alert.isRead ? 'text-gray-500' : 'text-white'}`}>
+                                                {alert.title.toUpperCase()}
+                                            </h3>
+                                            <div className="flex items-center gap-4 mt-2">
+                                                <div className="flex items-center gap-2 text-[10px] font-black tracking-widest text-gray-600 uppercase">
+                                                    <Calendar className="w-3 h-3" />
+                                                    {new Date(alert.createdAt).toLocaleString()}
+                                                </div>
+                                                <div className={`text-[8px] font-black uppercase px-2 py-0.5 rounded border ${alert.severity === 'high' ? 'border-red-500/20 text-red-500/60' : 'border-yellow-500/20 text-yellow-500/60'}`}>
+                                                    {alert.severity} PRIORITY
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        {!alert.isRead && (
+                                            <Button 
+                                                variant="secondary"
+                                                onClick={() => markAsRead(alert._id)}
+                                                className="px-6 py-2 text-xs"
+                                                icon={ChevronRight}
+                                            >
+                                                RESOLVE
+                                            </Button>
+                                        )}
+                                    </div>
+                                    <p className={`text-lg font-medium leading-relaxed italic ${alert.isRead ? 'text-gray-600' : 'text-gray-400'}`}>
+                                        "{alert.message}"
+                                    </p>
+                                </div>
+                            </Card>
+                        ))
+                    )}
+                </AnimatePresence>
+            </div>
+        </PageWrapper>
     );
 };
 

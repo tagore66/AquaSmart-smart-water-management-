@@ -4,10 +4,13 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { 
     IndianRupee, Calendar, CreditCard, CheckCircle, 
-    ChevronLeft, Droplet, Layers, ArrowRight, Loader2 
+    ChevronLeft, Droplet, Layers, ArrowRight, Clock
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
+import PageWrapper from '../components/layout/PageWrapper';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import AnimatedNumber from '../components/ui/AnimatedNumber';
 
 const BillDetails = () => {
     const { id } = useParams();
@@ -29,6 +32,7 @@ const BillDetails = () => {
         };
         fetchBill();
     }, [id]);
+
     const handlePay = async () => {
         try {
             const { data: orderData } = await axios.post(`/bills/${id}/order`);
@@ -60,7 +64,7 @@ const BillDetails = () => {
                     email: user?.email
                 },
                 theme: {
-                    color: '#2563eb'
+                    color: '#3b82f6'
                 }
             };
 
@@ -75,95 +79,111 @@ const BillDetails = () => {
         }
     };
 
-    if (loading) return <div className="h-screen flex items-center justify-center">Loading Bill Details...</div>;
-    if (!bill) return <div className="h-screen flex items-center justify-center text-red-400">Bill not found</div>;
+    if (!loading && !bill) return (
+        <PageWrapper title="Error" subtitle="Resource not found.">
+            <Card className="p-12 text-center">
+                <p className="text-red-400 font-bold">The requested bill lifecycle could not be retrieved.</p>
+                <Button className="mt-8 mx-auto" onClick={() => navigate('/bills')}>Return to Archive</Button>
+            </Card>
+        </PageWrapper>
+    );
 
     return (
-        <div className="flex bg-slate-950 min-h-screen text-white">
-            <Navbar />
-            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-10 max-w-4xl space-y-8">
-                <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
-                <ChevronLeft className="w-5 h-5" />
-                Back to Bills
-            </button>
-
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div>
-                    <h1 className="text-4xl font-bold mb-2">Bill Summary</h1>
-                    <p className="text-gray-400 flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        Generated on {new Date(bill.createdAt).toDateString()}
-                    </p>
-                </div>
-                <div className={`px-6 py-2 rounded-2xl border ${bill.status === 'Paid' ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'}`}>
-                    <span className="font-bold text-lg uppercase tracking-wider">{bill.status}</span>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="glass-card col-span-1 md:col-span-2 space-y-8">
-                    <h2 className="text-xl font-bold border-b border-white border-opacity-10 pb-4 flex items-center gap-3">
-                        <Layers className="text-blue-400" /> Slab Breakdown
-                    </h2>
+        <PageWrapper
+            title="Bill Summary"
+            subtitle={bill ? `Generated on ${new Date(bill.createdAt).toDateString()}` : "Syncing financial data..."}
+            loading={loading}
+            actions={
+                bill && (
+                    <div className={`px-6 py-2 rounded-2xl border flex items-center gap-3 ${bill.status === 'Paid' ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'}`}>
+                        {bill.status === 'Paid' ? <CheckCircle className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
+                        <span className="font-black text-sm uppercase tracking-widest leading-none">{bill.status}</span>
+                    </div>
+                )
+            }
+        >
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <Card className="lg:col-span-2 space-y-10 p-10">
+                    <div className="flex justify-between items-center border-b border-white/5 pb-8">
+                        <h2 className="text-2xl font-black italic tracking-tighter flex items-center gap-3">
+                            <Layers className="text-blue-500" /> SLAB BREAKDOWN
+                        </h2>
+                        <div className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Pricing Matrix v2.1</div>
+                    </div>
                     
                     <div className="space-y-4">
-                        {bill.slabBreakdown.map((slab, i) => (
-                            <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                        {bill?.slabBreakdown.map((slab, i) => (
+                            <motion.div 
+                                key={i}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                className="flex items-center justify-between p-6 bg-white/[0.02] rounded-[2rem] border border-white/5 hover:border-blue-500/20 transition-all duration-500"
+                            >
                                 <div>
-                                    <p className="font-bold text-lg">{slab.range}</p>
-                                    <p className="text-sm text-gray-400">Rate: ₹{slab.rate}/L × {slab.liters}L</p>
+                                    <p className="font-black text-2xl tracking-tighter italic">{slab.range}</p>
+                                    <p className="text-xs font-bold text-gray-500 mt-1 uppercase tracking-widest">Rate: ₹{slab.rate}/L × {slab.liters}L</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-bold text-xl">₹{slab.cost}</p>
+                                    <p className="font-black text-3xl italic">₹{slab.cost}</p>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
 
-                    <div className="pt-6 border-t border-white border-opacity-10 flex items-center justify-between">
-                        <span className="text-xl text-gray-400">Total Amount Due</span>
-                        <span className="text-4xl font-bold text-blue-400 flex items-center gap-2">
-                            <IndianRupee className="w-8 h-8" /> {bill.amount}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="glass-card space-y-6 flex flex-col justify-between">
-                    <div className="space-y-6">
-                        <h3 className="text-xl font-bold flex items-center gap-3">
-                            <Droplet className="text-blue-400" /> Usage Info
-                        </h3>
-                        <div>
-                            <p className="text-gray-400 text-sm mb-1">Weekly Period Starting</p>
-                            <p className="font-semibold">{new Date(bill.usage.weekStarting).toLocaleDateString()}</p>
-                        </div>
-                        <div>
-                            <p className="text-gray-400 text-sm mb-1">Total Consumption</p>
-                            <p className="font-semibold text-2xl">{bill.usage.totalLiters} Liters</p>
+                    <div className="pt-10 border-t border-white/5 flex items-center justify-between bg-gradient-to-r from-transparent to-blue-600/5 -mx-10 px-10 rounded-b-[3rem]">
+                        <span className="text-xl font-black italic text-gray-500 uppercase tracking-widest">Aggregate Due</span>
+                        <div className="text-5xl font-black italic tracking-tighter text-blue-400 flex items-center gap-2">
+                            ₹<AnimatedNumber value={bill?.amount || 0} />
                         </div>
                     </div>
+                </Card>
 
-                    {bill.status === 'Unpaid' ? (
-                        <button 
-                            onClick={handlePay}
-                            className="btn-primary w-full py-4 flex items-center justify-center gap-2 mt-auto"
-                        >
-                            <CreditCard className="w-5 h-5" />
-                            Pay with Razorpay
-                            <ArrowRight className="w-5 h-5" />
-                        </button>
-                    ) : (
-                        <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-center">
-                            <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
-                            <p className="text-green-400 font-bold mb-1">Payment Completed</p>
-                            <p className="text-xs text-gray-400">ID: {bill.paymentId}</p>
+                <div className="space-y-8 h-full">
+                    <Card className="p-8 space-y-8 flex flex-col justify-between h-full min-h-[400px]">
+                        <div className="space-y-8">
+                            <h3 className="text-xl font-black italic uppercase flex items-center gap-3 tracking-tight">
+                                <Droplet className="text-blue-500" /> Usage Vector
+                            </h3>
+                            <div className="space-y-6">
+                                <div>
+                                    <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-2">Tracking Interval</p>
+                                    <p className="font-black text-lg italic text-gray-200">{new Date(bill?.usage.weekStarting).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-2">Measured Volume</p>
+                                    <p className="font-black text-4xl italic tracking-tighter text-white">
+                                        <AnimatedNumber value={bill?.usage.totalLiters || 0} /> <span className="text-sm font-bold text-gray-600">Liters</span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                    )}
+
+                        <div className="pt-8">
+                            {bill?.status === 'Unpaid' ? (
+                                <Button 
+                                    onClick={handlePay}
+                                    className="w-full py-6 text-xl group"
+                                    icon={CreditCard}
+                                >
+                                    Proceed to Pay
+                                </Button>
+                            ) : (
+                                <div className="p-8 bg-green-500/10 border border-green-500/20 rounded-[2.5rem] text-center space-y-4">
+                                    <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(34,197,94,0.2)]">
+                                        <CheckCircle className="w-10 h-10 text-green-400" />
+                                    </div>
+                                    <div>
+                                        <p className="text-green-400 font-black text-xl italic uppercase tracking-tighter">Synchronized</p>
+                                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-2">ID: {bill?.paymentId}</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </Card>
                 </div>
             </div>
-
-            </main>
-        </div>
+        </PageWrapper>
     );
 };
 

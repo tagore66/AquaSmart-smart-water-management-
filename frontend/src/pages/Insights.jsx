@@ -10,8 +10,10 @@ import {
     LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
     ResponsiveContainer, PieChart, Pie, Cell, Legend
 } from 'recharts';
-import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
+import Card from '../components/ui/Card';
+import AnimatedNumber from '../components/ui/AnimatedNumber';
+import PageWrapper from '../components/layout/PageWrapper';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
 
@@ -83,21 +85,6 @@ const Insights = () => {
         setInsights(newInsights);
     };
 
-    if (loading) {
-        return (
-            <div className="flex flex-col ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-10 space-y-10 min-h-screen">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-10">
-                    <div>
-                        <div className="skeleton h-6 w-32 mb-2"></div>
-                        <div className="skeleton h-12 w-96"></div>
-                    </div>
-                    <div className="skeleton h-32 w-[320px] rounded-[30px]"></div>
-                </div>
-                <div className="skeleton h-96 w-full rounded-2xl"></div>
-            </div>
-        );
-    }
-
     const chartData = history.slice(-6).map(h => ({
         week: new Date(h.weekStarting).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
         usage: h.totalLiters
@@ -113,155 +100,183 @@ const Insights = () => {
     }));
 
     return (
-        <div className="flex bg-slate-950 min-h-screen text-white">
-            <Navbar />
-            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-10 space-y-10 overflow-y-auto">
-                {/* Hero Trend Metric */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-10">
+        <PageWrapper
+            title="Intelligence Insights"
+            subtitle="Deep comparative analysis of your water lifecycle."
+            loading={loading}
+            actions={
+                <Card hover={false} className="py-4 px-8 border-white/5 flex items-center gap-6 min-w-[320px]">
+                    <div className={`p-4 rounded-3xl ${stats.trendDirection === 'down' ? 'bg-green-500/10 text-green-400 border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.1)]' : 'bg-red-500/10 text-red-400 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]'}`}>
+                        {stats.trendDirection === 'down' ? <TrendingDown size={32} /> : <TrendingUp size={32} />}
+                    </div>
                     <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <Activity className="text-blue-500 w-5 h-5" />
-                            <span className="text-xs font-black uppercase tracking-[0.4em] text-gray-500">Live Comparative Analysis</span>
+                        <div className="flex items-center gap-2">
+                            <span className={`text-4xl font-black italic tracking-tighter ${stats.trendDirection === 'down' ? 'text-green-400' : 'text-red-400'}`}>
+                                {stats.trendDirection === 'down' ? '-' : '+'}<AnimatedNumber value={stats.trend} decimals={1} />%
+                            </span>
+                            {stats.trendDirection === 'down' ? <ArrowDownRight className="text-green-400 w-8 h-8" /> : <ArrowUpRight className="text-red-400 w-8 h-8" />}
                         </div>
-                        <h1 className="text-5xl font-black italic tracking-tighter uppercase leading-none">Intelligence <span className="text-gradient">Insights</span></h1>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mt-1">Week-over-week Delta</p>
                     </div>
-
-                    <div className="bg-slate-900/50 backdrop-blur-3xl border border-white/10 rounded-[30px] p-6 flex items-center gap-6 min-w-[320px]">
-                        <div className={`p-4 rounded-2xl ${stats.trendDirection === 'down' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                            {stats.trendDirection === 'down' ? <TrendingDown size={32} /> : <TrendingUp size={32} />}
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <span className={`text-3xl font-black italic ${stats.trendDirection === 'down' ? 'text-green-400' : 'text-red-400'}`}>
-                                    {stats.trendDirection === 'down' ? '-' : '+'}{stats.trend.toFixed(1)}%
-                                </span>
-                                {stats.trendDirection === 'down' ? <ArrowDownRight className="text-green-400" /> : <ArrowUpRight className="text-red-400" />}
-                            </div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">Vs Previous Week Consumption</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* 1. Weekly Usage Line Chart (MAIN) */}
-                <div className="glass-card">
-                    <div className="mb-10">
+                </Card>
+            }
+        >
+            {/* 1. Main Trajectory Chart */}
+            <Card className="p-10">
+                <div className="mb-12 flex justify-between items-start">
+                    <div>
                         <h2 className="text-2xl font-black italic uppercase flex items-center gap-3">
                             <TrendingUp className="text-blue-500" /> Consumption Gradient
                         </h2>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em] mt-1">Total weekly liters • 6-Week Trajectory</p>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em] mt-2">Total weekly liters • 6-Week High-Resolution Trajectory</p>
                     </div>
-                    <div style={{ width: '100%', height: 300 }}>
+                    <div className="px-5 py-2 glass rounded-2xl border-white/5 text-[10px] font-black tracking-widest text-blue-400">
+                        ANALYTICS ENGINE v2.4
+                    </div>
+                </div>
+                <div style={{ width: '100%', height: 350 }}>
+                    <ResponsiveContainer width="99%" height="100%">
+                        <LineChart data={chartData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                            <XAxis 
+                                dataKey="week" 
+                                stroke="#4b5563" 
+                                fontSize={10} 
+                                tickLine={false} 
+                                axisLine={false}
+                                tick={{fontWeight: 900}}
+                            />
+                            <YAxis 
+                                stroke="#4b5563" 
+                                fontSize={10} 
+                                tickLine={false} 
+                                axisLine={false}
+                                tickFormatter={(v) => `${v}L`}
+                                tick={{fontWeight: 900}}
+                            />
+                            <Tooltip 
+                                contentStyle={{ 
+                                    backgroundColor: 'rgba(15, 23, 42, 0.9)', 
+                                    backdropFilter: 'blur(10px)',
+                                    border: '1px solid rgba(255,255,255,0.1)', 
+                                    borderRadius: '1.5rem',
+                                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
+                                }}
+                                itemStyle={{ color: '#fff', fontWeight: 900 }}
+                            />
+                            <Line 
+                                type="monotone" 
+                                dataKey="usage" 
+                                stroke="#3b82f6" 
+                                strokeWidth={6} 
+                                dot={{ r: 8, fill: '#3b82f6', strokeWidth: 4, stroke: '#020617' }}
+                                activeDot={{ r: 10, strokeWidth: 0, shadow: '0 0 20px #3b82f6' }}
+                                animationDuration={2000}
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+            </Card>
+
+            {/* 2. Comparative Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <Card delay={0.2} className="p-10">
+                    <div className="mb-10">
+                        <h3 className="text-xl font-black italic uppercase flex items-center gap-3">
+                            <BarChart3 className="text-emerald-400" /> Category Benchmarking
+                        </h3>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em] mt-2">Grouped Comparison • 4-Cycle Intensity Delta</p>
+                    </div>
+                    <div style={{ width: '100%', height: 350 }}>
                         <ResponsiveContainer width="99%" height="100%">
-                            <LineChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                <XAxis 
-                                    dataKey="week" 
-                                    stroke="#4b5563" 
-                                    fontSize={10} 
-                                    tickLine={false} 
-                                    axisLine={false}
-                                    tick={{fontWeight: 900}}
-                                />
-                                <YAxis 
-                                    stroke="#4b5563" 
-                                    fontSize={10} 
-                                    tickLine={false} 
-                                    axisLine={false}
-                                    tickFormatter={(v) => `${v}L`}
-                                    tick={{fontWeight: 900}}
-                                />
+                            <BarChart data={barData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                                <XAxis dataKey="week" stroke="#4b5563" fontSize={10} tickLine={false} axisLine={false} tick={{fontWeight: 900}} />
+                                <YAxis hide />
                                 <Tooltip 
-                                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '15px' }}
-                                    itemStyle={{ color: '#fff', fontWeight: 900 }}
+                                    contentStyle={{ 
+                                        backgroundColor: 'rgba(15, 23, 42, 0.9)', 
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid rgba(255,255,255,0.1)', 
+                                        borderRadius: '1.5rem' 
+                                    }} 
                                 />
-                                <Line 
-                                    type="monotone" 
-                                    dataKey="usage" 
-                                    stroke="#3b82f6" 
-                                    strokeWidth={4} 
-                                    dot={{ r: 6, fill: '#3b82f6', strokeWidth: 2, stroke: '#0f172a' }}
-                                    activeDot={{ r: 8, strokeWidth: 0 }}
-                                    animationDuration={1500}
-                                />
-                            </LineChart>
+                                <Bar dataKey="bathing" fill={COLORS[0]} radius={[6, 6, 0, 0]} animationDuration={1000} />
+                                <Bar dataKey="kitchen" fill={COLORS[1]} radius={[6, 6, 0, 0]} animationDuration={1200} />
+                                <Bar dataKey="toilet" fill={COLORS[2]} radius={[6, 6, 0, 0]} animationDuration={1400} />
+                                <Bar dataKey="washing" fill={COLORS[3]} radius={[6, 6, 0, 0]} animationDuration={1600} />
+                                <Bar dataKey="gardening" fill={COLORS[4]} radius={[6, 6, 0, 0]} animationDuration={1800} />
+                            </BarChart>
                         </ResponsiveContainer>
                     </div>
+                </Card>
+
+                <Card delay={0.3} className="p-10 flex flex-col items-center">
+                    <div className="w-full mb-10 text-center lg:text-left">
+                        <h3 className="text-xl font-black italic uppercase flex items-center gap-3 justify-center lg:justify-start">
+                            <PieIcon className="text-fuchsia-500" /> Footprint Split
+                        </h3>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em] mt-2 text-center lg:text-left">Current cycle contribution intensity</p>
+                    </div>
+                    <div style={{ width: '100%', height: 350 }}>
+                        <ResponsiveContainer width="99%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={pieData}
+                                    innerRadius={90}
+                                    outerRadius={130}
+                                    paddingAngle={10}
+                                    dataKey="value"
+                                    animationDuration={2000}
+                                    animationBegin={300}
+                                >
+                                    {pieData.map((entry, index) => (
+                                        <Cell 
+                                            key={`cell-${index}`} 
+                                            fill={COLORS[index % COLORS.length]} 
+                                            stroke="rgba(0,0,0,0.4)"
+                                            strokeWidth={4}
+                                        />
+                                    ))}
+                                </Pie>
+                                <Tooltip 
+                                    contentStyle={{ 
+                                        backgroundColor: 'rgba(15, 23, 42, 0.9)', 
+                                        backdropFilter: 'blur(10px)',
+                                        border: '1px solid rgba(255,255,255,0.1)', 
+                                        borderRadius: '1.5rem' 
+                                    }} 
+                                />
+                                <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold' }} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Card>
+            </div>
+
+            {/* 3. Trend Observations */}
+            <div className="space-y-6 pt-10 pb-20">
+                <div className="flex items-center gap-3 px-2">
+                    <div className="p-3 bg-blue-500/10 rounded-xl">
+                        <Sparkles className="text-blue-500 w-6 h-6" />
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-black italic uppercase tracking-tight">AI Observations</h3>
+                        <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mt-1">Heuristic pattern detection engine</p>
+                    </div>
                 </div>
-
-                {/* 2. Secondary Charts Row */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="glass-card">
-                        <div className="mb-8">
-                            <h3 className="text-xl font-black italic uppercase flex items-center gap-3">
-                                <BarChart3 className="text-green-400" /> Category Benchmarking
-                            </h3>
-                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em] mt-1">Grouped Comparison • 4-Week Delta</p>
-                        </div>
-                        <div style={{ width: '100%', height: 350 }}>
-                            <ResponsiveContainer width="99%" height="100%">
-                                <BarChart data={barData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                    <XAxis dataKey="week" stroke="#4b5563" fontSize={10} tickLine={false} axisLine={false} />
-                                    <YAxis hide />
-                                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '15px' }} />
-                                    <Bar dataKey="bathing" fill={COLORS[0]} radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="kitchen" fill={COLORS[1]} radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="toilet" fill={COLORS[2]} radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="washing" fill={COLORS[3]} radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="gardening" fill={COLORS[4]} radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    <div className="glass-card flex flex-col items-center">
-                        <div className="w-full mb-8">
-                            <h3 className="text-xl font-black italic uppercase flex items-center gap-3">
-                                <PieIcon className="text-fuchsia-500" /> Footprint Distribution
-                            </h3>
-                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em] mt-1">Current week contribution by source</p>
-                        </div>
-                        <div style={{ width: '100%', height: 350 }}>
-                            <ResponsiveContainer width="99%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={pieData}
-                                        innerRadius={80}
-                                        outerRadius={120}
-                                        paddingAngle={5}
-                                        dataKey="value"
-                                    >
-                                        {pieData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '15px' }} />
-                                    <Legend />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-                </div>
-
-                {/* 3. Trend Observations */}
-                <div className="space-y-4 pb-20">
-                    <div className="flex items-center gap-3">
-                        <Sparkles className="text-blue-500" />
-                        <h3 className="text-2xl font-black italic uppercase">Automated Observations</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {insights.map((insight, idx) => (
-                            <div key={idx} className="p-6 rounded-[30px] bg-white/5 border border-white/10 flex items-start gap-4">
-                                <div className="p-2 bg-blue-500/10 rounded-lg shrink-0 mt-1">
-                                    <Calendar className="text-blue-400 w-4 h-4" />
-                                </div>
-                                <p className="text-gray-400 font-medium leading-relaxed">{insight}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {insights.map((insight, idx) => (
+                        <Card key={idx} delay={idx * 0.1 + 0.4} className="p-8 flex items-start gap-6 border-white/5 bg-gradient-to-br from-white/5 to-transparent">
+                            <div className="p-4 bg-blue-600/10 rounded-2xl border border-blue-500/10 shrink-0">
+                                <Activity className="text-blue-400 w-6 h-6" />
                             </div>
-                        ))}
-                    </div>
+                            <p className="text-gray-300 font-bold italic leading-relaxed text-lg tracking-tight">"{insight}"</p>
+                        </Card>
+                    ))}
                 </div>
-            </main>
-        </div>
+            </div>
+        </PageWrapper>
     );
 };
 

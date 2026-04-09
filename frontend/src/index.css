@@ -11,23 +11,23 @@
 }
 
 .glass {
-  @apply bg-white/[0.03] backdrop-blur-xl border border-white/5 shadow-2xl;
+  @apply bg-slate-900/40 backdrop-blur-2xl border border-white/10 shadow-2xl;
 }
 
 .glass-card {
-  @apply bg-white/[0.02] backdrop-blur-xl border border-white/5 shadow-2xl rounded-2xl p-6 transition-all duration-300 ease-out;
+  @apply bg-white/[0.03] backdrop-blur-xl border border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] rounded-[2rem] p-8 transition-all duration-500 ease-in-out;
 }
 
 .glass-card:hover {
-  @apply bg-white/[0.04] border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.2)] -translate-y-[2px] scale-[1.01];
+  @apply bg-white/[0.06] border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4)] -translate-y-[4px] scale-[1.02];
 }
 
 .btn-primary {
-  @apply px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] active:scale-95;
+  @apply px-8 py-3 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold transition-all duration-300 shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.4)] active:scale-95 flex items-center justify-center gap-2;
 }
 
 .input-field {
-  @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/10 outline-none transition-all duration-300 text-white placeholder:text-gray-500 placeholder:font-light;
+  @apply w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/10 outline-none transition-all duration-400 text-white placeholder:text-gray-500 placeholder:font-light;
 }
 
 /* Custom scrollbar */
@@ -55,7 +55,7 @@
 
 /* Premium Enhancements */
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 drop-shadow-sm;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 drop-shadow-sm font-bold;
 }
 
 .live-indicator {
