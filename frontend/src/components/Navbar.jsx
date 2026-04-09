@@ -23,7 +23,10 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="fixed left-0 top-0 h-screen w-20 md:w-64 glass border-r border-white/10 p-4 flex flex-col items-center md:items-stretch gap-8 z-50">
+        <nav 
+            className="fixed left-0 top-0 h-screen w-20 md:w-64 glass p-4 flex flex-col items-center md:items-stretch gap-8 z-50"
+            style={{ transform: 'translateZ(0)' }}
+        >
             <div className="flex items-center gap-3 px-2">
                 <div className="p-2 bg-blue-500 rounded-lg">
                     <Droplet className="text-white w-6 h-6" />
