@@ -37,7 +37,10 @@ const sendEmail = async (options) => {
         return data;
     } catch (error) {
         console.error('--- [EMAIL SYSTEM FATAL ERROR] ---');
-        console.error('Email sending failed:', error.response ? error.response.body : error.message);
+        console.error('Email report error:', error.message);
+        if (error.response && error.response.body) {
+            console.error('Brevo API Error Detail:', JSON.stringify(error.response.body, null, 2));
+        }
         throw error;
     }
 };
