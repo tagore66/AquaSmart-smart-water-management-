@@ -297,14 +297,18 @@ const Reports = () => {
                     styleTags.forEach(tag => tag.remove());
                     
                     // The targeted element is hidden in the real DOM, make it visible in the cloned DOM for capture
-                    const exportContainer = clonedDoc.querySelector('[style*="position: absolute"]');
+                    const exportContainer = clonedDoc.querySelector('[data-export-container="true"]');
                     if (exportContainer) {
+                        exportContainer.style.opacity = '1';
+                        exportContainer.style.visibility = 'visible';
+                        exportContainer.style.position = 'relative';
+                        exportContainer.style.top = '0';
+                        exportContainer.style.left = '0';
+                        exportContainer.style.display = 'block';
+                        
                         const template = exportContainer.querySelector('[data-export-template="true"]');
                         if (template) {
                             template.style.display = 'block';
-                            template.style.position = 'relative';
-                            template.style.top = '0';
-                            template.style.left = '0';
                         }
                     }
                 }
@@ -573,7 +577,11 @@ const Reports = () => {
             </div>
 
             {/* Hidden Export Container - Positioned off-screen and isolated from global styles */}
-            <div ref={exportRef} style={{ position: 'absolute', top: '-9999px', left: '-9999px', opacity: 0, pointerEvents: 'none', visibility: 'hidden' }}>
+            <div 
+                ref={exportRef} 
+                data-export-container="true"
+                style={{ position: 'absolute', top: '-9999px', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
+            >
                 <ReportExportTemplate 
                     reportData={reportData} 
                     aiReport={aiReport} 
