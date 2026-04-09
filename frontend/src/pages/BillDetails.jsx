@@ -15,6 +15,20 @@ const BillDetails = () => {
     const { user } = useAuth();
     const [bill, setBill] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchBill = async () => {
+            try {
+                const { data } = await axios.get(`/bills/${id}`);
+                setBill(data);
+            } catch (error) {
+                console.error('Error fetching bill details:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchBill();
+    }, [id]);
     const handlePay = async () => {
         try {
             const { data: orderData } = await axios.post(`/bills/${id}/order`);
