@@ -53,7 +53,7 @@ const Dashboard = () => {
     const systemStatus = hasActiveAlerts ? 'Risk' : 'Healthy';
 
     if (loading) return (
-        <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-10 space-y-10 min-h-screen">
+        <div className="flex flex-col ml-0 sm:ml-20 md:ml-64 p-6 md:p-10 pb-28 sm:pb-10 space-y-10 min-h-screen">
             <header className="pb-6 border-b border-white/5">
                 <div className="skeleton h-10 w-64 mb-4"></div>
                 <div className="skeleton h-6 w-96"></div>
@@ -82,7 +82,7 @@ const Dashboard = () => {
         <div className="flex bg-slate-950 min-h-screen text-white">
             <Navbar />
             
-            <main className="flex-1 ml-20 md:ml-64 p-6 md:p-10 space-y-10">
+            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-10 pb-28 sm:pb-10 space-y-10">
                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/5">
                     <div>
                         <div className="flex items-center gap-3 mb-2">

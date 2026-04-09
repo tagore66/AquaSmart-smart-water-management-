@@ -85,7 +85,7 @@ const Insights = () => {
 
     if (loading) {
         return (
-            <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-12 space-y-10 min-h-screen">
+            <div className="flex flex-col ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-10 space-y-10 min-h-screen">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-10">
                     <div>
                         <div className="skeleton h-6 w-32 mb-2"></div>
@@ -115,7 +115,7 @@ const Insights = () => {
     return (
         <div className="flex bg-slate-950 min-h-screen text-white">
             <Navbar />
-            <main className="flex-1 ml-20 md:ml-64 p-6 md:p-12 space-y-10 overflow-y-auto">
+            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-10 space-y-10 overflow-y-auto">
                 {/* Hero Trend Metric */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-10">
                     <div>

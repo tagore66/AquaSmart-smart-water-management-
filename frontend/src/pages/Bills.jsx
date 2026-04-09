@@ -77,7 +77,7 @@ const Bills = () => {
     };
 
     if (loading) return (
-        <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-12 space-y-10 min-h-screen max-w-5xl">
+        <div className="flex flex-col ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-10 space-y-10 min-h-screen max-w-5xl">
             <header className="mb-4">
                 <div className="skeleton h-10 w-64 mb-2"></div>
                 <div className="skeleton h-6 w-96"></div>
@@ -91,7 +91,7 @@ const Bills = () => {
     return (
         <div className="flex bg-slate-950 min-h-screen text-white">
             <Navbar />
-            <main className="flex-1 ml-20 md:ml-64 p-6 md:p-12 max-w-5xl space-y-10">
+            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-10 max-w-5xl space-y-10">
                 <header>
                     <button onClick={() => navigate('/dashboard')} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 mb-4">
                     <ChevronLeft className="w-5 h-5" />

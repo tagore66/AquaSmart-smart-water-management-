@@ -81,7 +81,7 @@ const BillDetails = () => {
     return (
         <div className="flex bg-slate-950 min-h-screen text-white">
             <Navbar />
-            <main className="flex-1 ml-20 md:ml-64 p-6 md:p-12 max-w-4xl space-y-8">
+            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-10 max-w-4xl space-y-8">
                 <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2">
                 <ChevronLeft className="w-5 h-5" />
                 Back to Bills

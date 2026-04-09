@@ -80,3 +80,15 @@
   background-size: 200% 100%;
   animation: shimmer 2s infinite linear;
 }
+
+/* Mobile Nav Specifics */
+.mobile-nav-active {
+    @apply text-blue-500 bg-blue-500/10;
+}
+
+@media (max-width: 639.98px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding-bottom: 7rem !important; /* Approximately 28 * 4px */
+  }
+}

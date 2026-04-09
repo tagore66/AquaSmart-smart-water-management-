@@ -103,7 +103,7 @@ const Profile = () => {
     };
 
     if (loading) return (
-        <div className="flex flex-col ml-20 md:ml-64 p-6 md:p-10 space-y-10 min-h-screen">
+        <div className="flex flex-col ml-0 sm:ml-20 md:ml-64 p-6 md:p-10 pb-28 sm:pb-10 space-y-10 min-h-screen">
             <header className="pb-6 border-b border-white/5">
                 <div className="skeleton h-10 w-64 mb-2"></div>
                 <div className="skeleton h-6 w-96"></div>
@@ -119,7 +119,7 @@ const Profile = () => {
         <div className="flex bg-slate-950 min-h-screen text-white">
             <Navbar />
             
-            <main className="flex-1 ml-20 md:ml-64 p-6 md:p-10 space-y-10">
+            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-10 pb-28 sm:pb-10 space-y-10">
                 <header className="pb-6 border-b border-white/5">
                     <h1 className="text-4xl font-bold mb-2 tracking-tight text-gradient">Account Settings</h1>
                     <p className="text-gray-400 text-lg">Manage your identity and security preferences.</p>

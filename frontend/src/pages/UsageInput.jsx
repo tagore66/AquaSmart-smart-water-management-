@@ -129,7 +129,7 @@ const UsageInput = () => {
     return (
         <div className="flex bg-slate-950 min-h-screen text-white">
             <Navbar />
-            <main className="flex-1 ml-20 md:ml-64 p-6 md:p-12 max-w-4xl space-y-8 relative">
+            <main className="flex-1 ml-0 sm:ml-20 md:ml-64 p-6 md:p-12 pb-28 sm:pb-12 max-w-4xl space-y-8 relative">
                 <AnimatePresence>
                 {showNotification && (
                     <motion.div
