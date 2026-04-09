@@ -106,7 +106,7 @@ const Profile = () => {
 
     return (
         <PageWrapper
-            title="Identity Core"
+            title="Account Settings"
             subtitle="Manage your identity and security preferences."
             loading={loading}
         >

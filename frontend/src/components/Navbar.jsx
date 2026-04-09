@@ -53,7 +53,7 @@ const Navbar = () => {
                     <span className="hidden md:block font-bold text-xl tracking-tight">AquaSmart</span>
                 </div>
 
-                <div className="flex-1 space-y-2 overflow-y-auto pr-2 scrollbar-hide">
+                <div className="flex-1 space-y-2 overflow-y-auto pr-2 smart-scrollbar">
                     <NavLink to="/dashboard" icon={LayoutDashboard} label="Dashboard" active={location.pathname === '/dashboard'} />
                     <NavLink to="/usage" icon={Plus} label="Add Usage" active={location.pathname === '/usage'} />
                     <NavLink to="/history" icon={History} label="History" active={location.pathname === '/history'} />

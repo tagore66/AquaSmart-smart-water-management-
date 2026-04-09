@@ -53,6 +53,21 @@
   display: none;
 }
 
+/* Sidebar specific slim scrollbar */
+.smart-scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+.smart-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.smart-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 10px;
+}
+.smart-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.3);
+}
+
 /* Premium Enhancements */
 .text-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 drop-shadow-sm font-bold;

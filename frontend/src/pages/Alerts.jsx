@@ -55,7 +55,7 @@ const Alerts = () => {
 
     return (
         <PageWrapper
-            title="Aegis Protocols"
+            title="Smart Alerts"
             subtitle="Real-time system monitoring and anomaly detection engine."
             loading={loading}
             actions={
