@@ -106,36 +106,36 @@ const Profile = () => {
 
     return (
         <PageWrapper
-            title="Account Settings"
+            title="Identity Core"
             subtitle="Manage your identity and security preferences."
             loading={loading}
         >
             <AnimatePresence>
                 {(error || success) && (
                     <motion.div 
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className={`p-6 rounded-3xl flex items-center gap-4 border mb-8 ${success ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}
+                        initial={{ opacity: 0, y: -15, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, y: -15, filter: 'blur(10px)' }}
+                        className={`p-4 rounded-xl flex items-center gap-3 border mb-6 text-xs transition-all ${success ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}
                     >
-                        {success ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertTriangle className="w-5 h-5 flex-shrink-0" />}
-                        <span className="font-bold tracking-tight">{success || error}</span>
+                        {success ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
+                        <span className="font-black tracking-tight uppercase">{success || error}</span>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Public Profile Form */}
-                <Card className="lg:col-span-2 p-10 space-y-8">
-                    <div className="flex items-center justify-between border-b border-white/5 pb-8">
-                        <h3 className="text-2xl font-black italic tracking-tighter flex items-center gap-3">
-                            <User className="text-blue-500" /> GENERAL INFORMATION
+                <Card className="lg:col-span-2 p-8 space-y-6 border-white/5 bg-gradient-to-br from-white/[0.01] to-transparent">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-6">
+                        <h3 className="text-xl font-black italic tracking-tighter flex items-center gap-2.5">
+                            <User className="text-blue-500 w-5 h-5" /> IDENTITY MATRIX
                         </h3>
                         {!isEditing && (
                             <Button 
                                 variant="ghost"
                                 onClick={() => setIsEditing(true)}
-                                className="px-5 py-2 text-xs uppercase tracking-widest"
+                                className="px-4 py-1.5 text-[9px] uppercase tracking-[0.2em] font-black border-white/5 hover:bg-blue-600/10 hover:text-blue-400"
                                 icon={Edit3}
                             >
                                 Edit Profile
@@ -143,72 +143,72 @@ const Profile = () => {
                         )}
                     </div>
                     
-                    <form onSubmit={handleUpdateProfile} className="space-y-8 pt-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">First Name</label>
+                    <form onSubmit={handleUpdateProfile} className="space-y-6 pt-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">First Name</label>
                                 <input 
                                     type="text" 
                                     value={formData.firstName}
                                     onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                                    className={`w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all text-white placeholder-gray-600 font-medium ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
-                                    placeholder="John"
+                                    className={`w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] transition-all text-white placeholder-gray-700 font-bold text-sm ${!isEditing ? 'opacity-40 cursor-default' : ''}`}
+                                    placeholder="First Name"
                                     readOnly={!isEditing}
                                 />
                             </div>
-                            <div className="space-y-3">
-                                <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Last Name</label>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Last Name</label>
                                 <input 
                                     type="text" 
                                     value={formData.lastName}
                                     onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                                    className={`w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all text-white placeholder-gray-600 font-medium ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
-                                    placeholder="Doe"
+                                    className={`w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] transition-all text-white placeholder-gray-700 font-bold text-sm ${!isEditing ? 'opacity-40 cursor-default' : ''}`}
+                                    placeholder="Last Name"
                                     readOnly={!isEditing}
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Registered Email (Immutable)</label>
+                        <div className="space-y-2">
+                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Core Credential (Immutable)</label>
                             <input 
                                 type="email" 
                                 value={user?.email}
                                 disabled
-                                className="w-full bg-black/20 border border-white/5 rounded-2xl px-5 py-4 text-gray-500 font-medium cursor-not-allowed"
+                                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-gray-600 font-bold text-sm cursor-not-allowed"
                             />
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Recovery Email</label>
+                        <div className="space-y-2">
+                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Recovery Protocol Email</label>
                             <input 
                                 type="email" 
                                 value={formData.recoveryEmail}
                                 onChange={(e) => setFormData({...formData, recoveryEmail: e.target.value})}
-                                className={`w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 transition-all text-white placeholder-gray-600 font-medium ${!isEditing ? 'opacity-50 cursor-default' : ''}`}
+                                className={`w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] transition-all text-white placeholder-gray-700 font-bold text-sm ${!isEditing ? 'opacity-40 cursor-default' : ''}`}
                                 placeholder="recovery@example.com"
                                 readOnly={!isEditing}
                             />
-                            <p className="text-[10px] text-gray-500 italic font-medium ml-2">Designated channel for critical infrastructure alerts.</p>
+                            <p className="text-[9px] text-gray-700 italic font-black uppercase tracking-tight ml-1.5">Emergency infrastructure alert channel</p>
                         </div>
 
                         {isEditing && (
-                            <div className="flex justify-end gap-4 pt-8 border-t border-white/5">
+                            <div className="flex justify-end gap-3 pt-6 border-t border-white/5">
                                 <Button 
                                     type="button"
-                                    variant="secondary"
+                                    variant="ghost"
                                     onClick={() => setIsEditing(false)}
-                                    className="px-8"
+                                    className="px-6 py-2 text-[10px] uppercase font-black tracking-widest text-gray-600 hover:text-white border-none h-auto"
                                 >
                                     Cancel
                                 </Button>
                                 <Button 
                                     type="submit" 
                                     disabled={updating}
-                                    className="px-10"
+                                    className="px-8 py-2.5 text-[10px] uppercase font-black italic tracking-tighter"
                                     icon={updating ? Loader2 : Save}
                                 >
-                                    {updating ? 'Encrypting...' : 'Save Changes'}
+                                    {updating ? 'Syncing...' : 'Save Matrix'}
                                 </Button>
                             </div>
                         )}
@@ -216,39 +216,39 @@ const Profile = () => {
                 </Card>
 
                 {/* Security Card */}
-                <div className="space-y-8">
-                    <Card className="p-8 border-l-4 border-l-yellow-500">
-                        <h3 className="text-xl font-black italic tracking-tighter mb-6 flex items-center gap-3">
-                            <Shield className="text-yellow-500" /> SECURITY HUB
+                <div className="space-y-6">
+                    <Card className="p-6 border-l-2 border-l-yellow-500 border-white/5 bg-gradient-to-br from-yellow-500/[0.02] to-transparent">
+                        <h3 className="text-lg font-black italic tracking-tighter mb-4 flex items-center gap-2.5 uppercase text-white/90">
+                            <Shield className="text-yellow-500 w-4 h-4" /> Security Node
                         </h3>
-                        <p className="text-gray-400 font-medium text-sm mb-8 leading-relaxed">
-                            Maintain core integrity by rotating your credentials. Two-factor authentication required.
+                        <p className="text-gray-500 font-bold text-xs mb-6 leading-relaxed italic">
+                            Maintain core integrity by rotating credentials. Secure OTP required.
                         </p>
                         
                         <Button 
-                            variant="secondary"
+                            variant="ghost"
                             onClick={() => setShowPasswordModal(true)}
-                            className="w-full justify-between items-center bg-white/5 hover:bg-yellow-500/10 border-white/5 hover:border-yellow-500/20 py-4 h-auto group"
+                            className="w-full justify-between items-center bg-white/[0.02] hover:bg-yellow-500/10 border-white/5 hover:border-yellow-500/20 p-4 h-auto group rounded-xl transition-all duration-500"
                         >
-                            <div className="flex items-center gap-4 text-left">
-                                <div className="p-3 bg-yellow-500/10 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                                    <Key className="w-5 h-5 text-yellow-500" />
+                            <div className="flex items-center gap-3.5 text-left">
+                                <div className="p-2.5 bg-yellow-500/10 rounded-lg group-hover:scale-110 transition-transform duration-500">
+                                    <Key className="w-4 h-4 text-yellow-500" />
                                 </div>
-                                <div>
-                                    <p className="font-bold text-gray-200 group-hover:text-yellow-500 transition-colors">Rotate Password</p>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">Requires Email OTP</p>
+                                <div className="leading-none">
+                                    <p className="font-black text-gray-300 group-hover:text-yellow-500 transition-colors text-sm uppercase tracking-tighter italic">Rotate Cipher</p>
+                                    <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-600 mt-1.5">Validation Key Required</p>
                                 </div>
                             </div>
-                            <ArrowRight className="w-5 h-5 text-gray-600 group-hover:translate-x-1 group-hover:text-yellow-500 transition-all" />
+                            <ArrowRight className="w-4 h-4 text-gray-700 group-hover:translate-x-0.5 group-hover:text-yellow-500 transition-all" />
                         </Button>
                     </Card>
 
-                    <Card className="p-8 bg-gradient-to-br from-blue-600/10 to-transparent border-blue-500/20 text-center flex flex-col items-center justify-center">
-                        <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20 mb-6 shadow-[0_0_30px_rgba(59,130,246,0.15)]">
-                            <CheckCircle2 className="w-10 h-10 text-blue-400" />
+                    <Card className="p-8 bg-gradient-to-br from-blue-600/[0.03] to-transparent border-blue-500/10 text-center flex flex-col items-center justify-center border-white/5">
+                        <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/10 mb-5 ring-4 ring-blue-500/5 transition-transform hover:scale-110 duration-500">
+                            <CheckCircle2 className="w-8 h-8 text-blue-500/60" />
                         </div>
-                        <h4 className="font-black italic tracking-tighter text-xl mb-2">Identity Verified</h4>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-blue-400/60">OAuth & JWT Encryption Active</p>
+                        <h4 className="font-black italic tracking-tighter text-lg mb-1 uppercase text-white/80">AUTHENTICATED</h4>
+                        <p className="text-[8px] font-black uppercase tracking-[0.4em] text-blue-500/40 mt-1">JWT Encryption Active</p>
                     </Card>
                 </div>
             </div>
@@ -256,32 +256,31 @@ const Profile = () => {
             {/* Password Reset Modal */}
             <AnimatePresence>
                 {showPasswordModal && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/85 backdrop-blur-2xl">
                         <motion.div 
-                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            initial={{ opacity: 0, scale: 0.94, y: 30 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="glass max-w-md w-full p-10 space-y-8 relative rounded-[3rem] border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]"
+                            exit={{ opacity: 0, scale: 0.94, y: 30 }}
+                            className="glass max-w-sm w-full p-8 space-y-8 relative rounded-[2.5rem] border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,1)] border-t-8 border-yellow-600"
                         >
                             <button 
                                 onClick={() => { setShowPasswordModal(false); setOtpSent(false); }}
-                                className="absolute top-8 right-8 p-3 hover:bg-white/10 rounded-full transition-all duration-300 text-gray-400 hover:text-white hover:rotate-90"
+                                className="absolute top-6 right-6 p-2.5 hover:bg-white/5 rounded-xl transition-all duration-300 text-gray-600 hover:text-white"
                             >
                                 <X className="w-5 h-5" />
                             </button>
 
-                            <div className="text-center space-y-4">
-                                <div className="w-24 h-24 bg-yellow-500/10 rounded-[2rem] flex items-center justify-center mx-auto mb-6 ring-8 ring-yellow-500/5">
-                                    <Key className="w-10 h-10 text-yellow-500" />
+                            <div className="text-center space-y-3">
+                                <div className="w-20 h-20 bg-yellow-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 ring-4 ring-yellow-500/5">
+                                    <Key className="w-8 h-8 text-yellow-500" />
                                 </div>
-                                <h2 className="text-2xl font-black italic tracking-tighter uppercase relative">
-                                    Admin Override
-                                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-yellow-500 rounded-full"></div>
+                                <h2 className="text-2xl font-black italic tracking-tighter uppercase relative leading-none">
+                                    Cipher Update
                                 </h2>
-                                <p className="text-gray-400 font-medium leading-relaxed italic text-sm mt-4">
+                                <p className="text-gray-500 font-bold leading-relaxed italic text-xs mt-4 px-4">
                                     {otpSent 
-                                        ? "Validation token dispatched. Intercept and verify."
-                                        : "Initiate secure credential rotation. OTP required."}
+                                        ? "Validation token dispatched to core inbox."
+                                        : "Initiate secure credential rotation protocol."}
                                 </p>
                             </div>
 
@@ -289,65 +288,65 @@ const Profile = () => {
                                 <Button 
                                     onClick={handleSendOTP}
                                     disabled={otpLoading}
-                                    className="w-full py-5 mt-8 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.5)]"
+                                    className="w-full py-4 mt-6 text-xs uppercase font-black italic tracking-tighter"
                                     icon={otpLoading ? Loader2 : Key}
                                 >
                                     {otpLoading ? 'Generating...' : 'Request Validation Token'}
                                 </Button>
                             ) : (
-                                <form onSubmit={handleResetPassword} className="space-y-8 mt-8">
-                                    <div className="space-y-3">
-                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Authorization Token</label>
+                                <form onSubmit={handleResetPassword} className="space-y-6 mt-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Security Token</label>
                                         <input 
                                             type="text" 
                                             maxLength="6"
                                             value={otp}
                                             onChange={(e) => setOtp(e.target.value)}
-                                            className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-yellow-500/50 focus:bg-yellow-500/5 text-center text-3xl tracking-[0.5em] font-mono text-yellow-400 placeholder-white/10 transition-all font-black"
+                                            className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-yellow-500/40 focus:bg-yellow-500/[0.03] text-center text-2xl tracking-[0.4em] font-mono text-yellow-500 transition-all font-black placeholder-white/5"
                                             placeholder="000000"
                                             required
                                         />
                                     </div>
-                                    <div className="space-y-6">
-                                        <div className="space-y-3">
-                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">New Core Cipher</label>
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Core Cipher</label>
                                             <input 
                                                 type="password" 
                                                 value={newPassword}
                                                 onChange={(e) => setNewPassword(e.target.value)}
-                                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 text-center text-2xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/10"
+                                                className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] text-center text-xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/5"
                                                 placeholder="••••••••"
                                                 required
                                             />
                                         </div>
-                                        <div className="space-y-3">
-                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-2">Verify Core Cipher</label>
+                                        <div className="space-y-2">
+                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Confirm Cipher</label>
                                             <input 
                                                 type="password" 
                                                 value={confirmPassword}
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 focus:bg-blue-500/5 text-center text-2xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/10 relative"
+                                                className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] text-center text-xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/5"
                                                 placeholder="••••••••"
                                                 required
                                             />
                                         </div>
                                     </div>
-                                    <div className="space-y-4 pt-4">
+                                    <div className="space-y-3 pt-2">
                                         <Button 
                                             type="submit" 
                                             disabled={updating}
-                                            className="w-full py-5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.5)]"
+                                            className="w-full py-4 text-xs font-black italic uppercase tracking-tighter"
                                             icon={updating ? Loader2 : Save}
                                         >
-                                            {updating ? 'Encrypting...' : 'Confirm Override'}
+                                            {updating ? 'Encrypting...' : 'Override Key'}
                                         </Button>
                                         <div className="text-center">
                                             <button 
                                                 type="button"
                                                 onClick={handleSendOTP}
-                                                className="text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors py-2"
+                                                className="text-[8px] font-black uppercase tracking-[0.2em] text-blue-500/60 hover:text-blue-400 transition-colors py-1.5"
                                             >
-                                                Resend Validation Token
+                                                Resend Validation Key
                                             </button>
                                         </div>
                                     </div>

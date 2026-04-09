@@ -127,12 +127,12 @@ const Reports = () => {
                         clonedReport.style.height = 'auto';
                         clonedReport.style.maxHeight = 'none';
                         clonedReport.style.overflow = 'visible';
-                        clonedReport.style.width = '800px';
+                        clonedReport.style.width = '750px';
                     }
                 }
             });
 
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'px',
@@ -199,43 +199,43 @@ const Reports = () => {
             <AnimatePresence>
                 {(error || success) && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className={`p-6 rounded-3xl flex items-center gap-4 border ${success
+                        initial={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+                        className={`p-4 rounded-2xl flex items-center gap-4 border text-sm transition-all ${success
                             ? 'bg-green-500/10 border-green-500/20 text-green-400'
                             : 'bg-red-500/10 border-red-500/20 text-red-500'
                         }`}
                     >
                         {success ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
-                        <span className="font-bold tracking-tight">{success || error}</span>
+                        <span className="font-bold tracking-tight uppercase">{success || error}</span>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Controls */}
                 <div className="space-y-6">
-                    <Card className="p-8">
-                        <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
-                            <Calendar className="text-blue-400" /> SELECT WEEK
+                    <Card className="p-6 border-white/5">
+                        <h3 className="text-[10px] font-black tracking-[0.2em] mb-6 flex items-center gap-3 text-gray-400 uppercase">
+                            <Calendar className="text-blue-500 w-4 h-4" /> Select Lifecycle Week
                         </h3>
-                        <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 scrollbar-hide">
+                        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
                             {history.map((h, idx) => (
                                 <button
                                     key={h._id}
                                     onClick={() => setSelectedWeek(h._id)}
-                                    className={`w-full flex items-center justify-between p-5 rounded-2xl border transition-all duration-300 ${selectedWeek === h._id
-                                        ? 'bg-blue-600 border-blue-500 text-white shadow-xl shadow-blue-600/20'
+                                    className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-500 ${selectedWeek === h._id
+                                        ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20'
                                         : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10'
                                     }`}
                                 >
-                                    <div className="text-left">
-                                        <p className="font-black italic text-sm">
+                                    <div className="text-left leading-none">
+                                        <p className="font-black italic text-xs uppercase tracking-tighter">
                                             {new Date(h.weekStarting).toLocaleDateString()}
                                         </p>
                                     </div>
-                                    <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${selectedWeek === h._id ? 'rotate-90 scale-125' : ''}`} />
+                                    <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-500 ${selectedWeek === h._id ? 'rotate-90 scale-110' : ''}`} />
                                 </button>
                             ))}
                         </div>
@@ -244,145 +244,148 @@ const Reports = () => {
                     <Button
                         disabled={!reportData || generating}
                         onClick={generatePDF}
-                        className="w-full py-6 text-xl"
+                        className="w-full py-4 text-sm font-black italic tracking-tighter uppercase"
                         icon={generating ? Loader2 : Download}
                     >
-                        {generating ? 'Processing Engine...' : 'DOWNLOAD PDF'}
+                        {generating ? 'Processing Engine...' : 'EXPORT PERFORMANCE PDF'}
                     </Button>
                 </div>
 
                 {/* Preview Area */}
                 <div className="lg:col-span-2">
-                    <div className="sticky top-10 flex flex-col gap-4">
+                    <div className="sticky top-10 flex flex-col gap-3">
                         <div className="flex items-center gap-3 px-2">
-                            <Sparkles className="text-blue-400 w-4 h-4" />
-                            <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em]">Report Preview Studio</h3>
+                            <Sparkles className="text-blue-400 w-3.5 h-3.5" />
+                            <h3 className="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em]">Report Preview Studio</h3>
                         </div>
                         
-                        <div className="glass shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)] rounded-[3rem] overflow-hidden border-white/10">
-                            <div className="h-[600px] overflow-y-auto p-10 custom-scrollbar scroll-smooth">
+                        <div className="glass shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] rounded-[2.5rem] overflow-hidden border-white/10">
+                            <div className="h-[550px] overflow-y-auto p-8 custom-scrollbar scroll-smooth">
                                 <div
                                     ref={reportRef}
                                     data-report-container="true"
-                                    className="bg-slate-950 rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden relative w-full min-w-[650px]"
+                                    className="bg-slate-950 rounded-[2rem] border border-white/5 shadow-2xl overflow-hidden relative w-full min-w-[600px] mx-auto"
                                 >
                                     {/* Report Header */}
-                                    <div className="p-10 bg-gradient-to-br from-blue-700 to-blue-600 text-white flex justify-between items-center relative">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-md">
-                                                <Droplet className="w-8 h-8 fill-white" />
+                                    <div className="p-8 bg-gradient-to-br from-blue-700 to-blue-600 text-white flex justify-between items-center relative">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-md">
+                                                <Droplet className="w-6 h-6 fill-white" />
                                             </div>
                                             <div>
-                                                <h2 className="text-3xl font-black italic tracking-tighter">AQUASMART</h2>
-                                                <p className="font-black text-[10px] tracking-[0.3em] uppercase text-blue-100">Verified Intelligence</p>
+                                                <h2 className="text-2xl font-black italic tracking-tighter">AQUASMART</h2>
+                                                <p className="font-black text-[8px] tracking-[0.3em] uppercase text-blue-100/60">Verified Analytics</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-xl font-black italic">{weekLabel}</p>
-                                            <p className="text-[10px] font-black opacity-60 tracking-widest text-blue-100">ID: {selectedWeek?.slice(-8).toUpperCase()}</p>
+                                            <p className="text-lg font-black italic mb-0.5">{weekLabel}</p>
+                                            <p className="text-[9px] font-black opacity-40 tracking-widest text-blue-100 uppercase">ID: {selectedWeek?.slice(-8).toUpperCase()}</p>
                                         </div>
                                     </div>
 
-                                    <div className="p-12 space-y-12">
+                                    <div className="p-10 space-y-10">
                                         {/* Usage Hero */}
-                                        <div className="text-center py-10 rounded-[3rem] bg-white/[0.02] border border-white/5">
-                                            <p className="text-[10px] uppercase font-black tracking-[0.5em] text-gray-600 mb-4">Weekly Consumption</p>
-                                            <div className="text-7xl font-black italic tracking-tighter text-white leading-none">
-                                                {reportData?.totalLiters} <span className="text-2xl not-italic font-black text-blue-500 tracking-normal ml-2">LITRES</span>
+                                        <div className="text-center py-8 rounded-[2rem] bg-white/[0.01] border border-white/5 relative overflow-hidden group">
+                                            <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            <p className="text-[9px] uppercase font-black tracking-[0.5em] text-gray-600 mb-3 relative z-10">Weekly Consumption Meta</p>
+                                            <div className="text-6xl font-black italic tracking-tighter text-white leading-none relative z-10">
+                                                {reportData?.totalLiters} <span className="text-xl not-italic font-black text-blue-500 tracking-normal ml-1.5">L</span>
                                             </div>
-                                            <div className="mt-8 flex justify-center">
-                                                <div className="px-6 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center gap-3">
-                                                    <TrendingDown className="w-4 h-4 text-blue-400" />
-                                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Analytics Engine Active</span>
+                                            <div className="mt-6 flex justify-center relative z-10">
+                                                <div className="px-5 py-1.5 bg-blue-500/10 border border-blue-500/10 rounded-full flex items-center gap-2">
+                                                    <TrendingDown className="w-3.5 h-3.5 text-blue-400" />
+                                                    <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none mt-0.5">Telemetry Active</span>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Stats Grid */}
-                                        <div className="grid grid-cols-3 gap-6">
+                                        <div className="grid grid-cols-3 gap-5">
                                             {[
                                                 { label: 'EFFICIENCY', value: `${Math.min(100, Math.round(((135 * reportData?.numPeople * 7) / reportData?.totalLiters) * 100))}%`, color: 'text-blue-400', sub: 'vs Benchmark' },
-                                                { label: 'STABILITY', value: reportData?.totalLiters < (135 * reportData?.numPeople * 7) ? 'PEAK' : 'BASE', color: 'text-green-400', sub: 'Health Status' },
-                                                { label: 'PRIMARY', value: reportData ? Object.entries(reportData.categories).reduce((a, b) => a[1] > b[1] ? a : b)[0].toUpperCase() : '...', color: 'text-yellow-400', sub: 'Top Consumer' }
+                                                { label: 'STABILITY', value: reportData?.totalLiters < (135 * reportData?.numPeople * 7) ? 'PEAK' : 'BASE', color: 'text-green-400', sub: 'Health Check' },
+                                                { label: 'PRIMARY', value: reportData ? Object.entries(reportData.categories).reduce((a, b) => a[1] > b[1] ? a : b)[0].toUpperCase() : '...', color: 'text-yellow-400', sub: 'Top Sector' }
                                             ].map((stat, i) => (
-                                                <div key={i} className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 text-center">
-                                                    <p className="text-[8px] font-black tracking-widest text-gray-600 mb-2 uppercase">{stat.label}</p>
-                                                    <p className={`text-2xl font-black italic mb-1 ${stat.color}`}>{stat.value}</p>
-                                                    <p className="text-[10px] font-bold text-gray-500 tracking-tight">{stat.sub}</p>
+                                                <div key={i} className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 text-center">
+                                                    <p className="text-[7.5px] font-black tracking-widest text-gray-600 mb-1.5 uppercase">{stat.label}</p>
+                                                    <p className={`text-xl font-black italic mb-0.5 ${stat.color}`}>{stat.value}</p>
+                                                    <p className="text-[9px] font-bold text-gray-500 tracking-tight leading-none">{stat.sub}</p>
                                                 </div>
                                             ))}
                                         </div>
 
                                         {/* Chart & Table */}
-                                        <div className="grid grid-cols-2 gap-12">
-                                            <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5">
-                                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-3 text-gray-500 mb-8">
-                                                    <PieIcon className="w-5 h-5 text-blue-400" /> Split Matrix
+                                        <div className="grid grid-cols-2 gap-10">
+                                            <div className="p-6 rounded-[2rem] bg-white/[0.01] border border-white/5">
+                                                <h4 className="text-[9px] font-black uppercase tracking-[0.3em] flex items-center gap-2 text-gray-500 mb-6">
+                                                    <PieIcon className="w-4 h-4 text-blue-500" /> Split Index
                                                 </h4>
-                                                <div className="h-64">
+                                                <div className="h-56">
                                                     <ResponsiveContainer width="100%" height="100%">
                                                         <PieChart>
                                                             <Pie
                                                                 data={chartData}
-                                                                innerRadius={50}
-                                                                outerRadius={80}
-                                                                paddingAngle={10}
+                                                                innerRadius={45}
+                                                                outerRadius={70}
+                                                                paddingAngle={8}
                                                                 dataKey="value"
                                                                 isAnimationActive={false}
                                                             >
                                                                 {chartData.map((entry, index) => (
-                                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="rgba(255,255,255,0.05)" strokeWidth={1} />
                                                                 ))}
                                                             </Pie>
                                                         </PieChart>
                                                     </ResponsiveContainer>
                                                 </div>
                                             </div>
-                                            <div className="space-y-3">
-                                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-6">Distribution</h4>
+                                            <div className="space-y-2.5">
+                                                <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600 mb-5">Sector Distribution</h4>
                                                 {chartData.map((item, idx) => (
-                                                    <div key={idx} className="flex justify-between items-center p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
-                                                            <span className="text-sm font-bold text-gray-400 italic">{item.name}</span>
+                                                    <div key={idx} className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                                                        <div className="flex items-center gap-2.5">
+                                                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></div>
+                                                            <span className="text-xs font-bold text-gray-400 italic leading-none">{item.name}</span>
                                                         </div>
-                                                        <span className="font-black text-white">{item.value}L</span>
+                                                        <span className="font-black text-sm text-white leading-none italic">{item.value}L</span>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
 
                                         {/* AI Studio */}
-                                        <div className="space-y-8">
-                                            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-3 text-purple-400">
-                                                <Brain className="w-5 h-5" /> AI Intelligence Studio
+                                        <div className="space-y-6">
+                                            <h4 className="text-[9px] font-black uppercase tracking-[0.3em] flex items-center gap-2.5 text-purple-400">
+                                                <Brain className="w-4 h-4" /> Cognitive Analysis Matrix
                                             </h4>
-                                            <div className="space-y-4">
+                                            <div className="space-y-3">
                                                 {aiReport.loading ? (
-                                                    <div className="p-10 text-center italic text-gray-500 font-bold tracking-tight">Synchronizing neural logs...</div>
+                                                    <div className="p-8 text-center italic text-gray-600 text-[10px] font-bold tracking-tight">Accessing core neural logs...</div>
                                                 ) : aiReport.suggestions.map((s, idx) => (
-                                                    <div key={idx} className="p-6 rounded-3xl bg-purple-500/5 border border-purple-500/10 flex items-start gap-4">
-                                                        <Zap className="w-5 h-5 text-purple-400 mt-1 shrink-0" />
-                                                        <p className="text-sm font-bold text-gray-300 leading-relaxed italic">"{s.replace(/^- /, '')}"</p>
+                                                    <div key={idx} className="p-4 rounded-2xl bg-purple-500/[0.02] border border-purple-500/10 flex items-start gap-3.5">
+                                                        <Zap className="w-4 h-4 text-purple-400 mt-0.5 shrink-0" />
+                                                        <p className="text-xs font-bold text-gray-400 leading-relaxed italic">"{s.replace(/^- /, '')}"</p>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                         
                                         {/* Summary */}
-                                        <div className="p-10 rounded-[3rem] bg-slate-900/50 border border-white/5 relative">
-                                            <Sparkles className="absolute top-6 right-8 text-blue-500/20 w-12 h-12" />
-                                            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600 mb-6">Executive Summary</h4>
-                                            <p className="text-lg font-bold text-white leading-relaxed italic">
-                                                {aiReport.loading ? 'Generating final brief...' : aiReport.summary}
+                                        <div className="p-8 rounded-[2rem] bg-slate-900/40 border border-white/5 relative group overflow-hidden">
+                                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                                                <Sparkles className="text-blue-500 w-10 h-10" />
+                                            </div>
+                                            <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600 mb-4">Core Briefing</h4>
+                                            <p className="text-base font-bold text-gray-300 leading-relaxed italic">
+                                                {aiReport.loading ? 'Synchronizing final brief...' : aiReport.summary}
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Footer Branding */}
-                                    <div className="p-10 bg-slate-900 flex justify-between items-center text-[8px] font-black uppercase tracking-[0.4em] text-gray-500 opacity-60 italic">
-                                        <span>AquaSmart Core v2.8 / 64-Bit Analytics</span>
-                                        <span>Certified Authentic</span>
+                                    <div className="p-8 bg-slate-900/80 flex justify-between items-center text-[7.5px] font-black uppercase tracking-[0.4em] text-gray-600 italic">
+                                        <span>AquaSmart Core v3.2 / High-Bit Telemetry</span>
+                                        <span>Authentication Certified</span>
                                     </div>
                                 </div>
                             </div>
@@ -394,45 +397,45 @@ const Reports = () => {
             {/* Email Modal */}
             <AnimatePresence>
                 {showEmailModal && (
-                    <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-black/80 backdrop-blur-2xl">
+                    <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-black/85 backdrop-blur-3xl">
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.9, y: 40 }}
+                            initial={{ opacity: 0, scale: 0.94, y: 30 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 40 }}
-                            className="glass max-w-md w-full p-12 text-center space-y-10 relative overflow-hidden rounded-[3rem] border-t-8 border-blue-600"
+                            exit={{ opacity: 0, scale: 0.94, y: 30 }}
+                            className="glass max-w-sm w-full p-10 text-center space-y-8 relative overflow-hidden rounded-[2.5rem] border-t-8 border-blue-600"
                         >
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 animate-pulse"></div>
+                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600"></div>
 
-                            <div className="w-28 h-28 bg-blue-600/10 rounded-[3rem] flex items-center justify-center mx-auto ring-8 ring-blue-600/5 transition-transform hover:scale-110 duration-500">
-                                <Send className="w-14 h-14 text-blue-500" />
+                            <div className="w-20 h-20 bg-blue-600/10 rounded-[2rem] flex items-center justify-center mx-auto ring-4 ring-blue-600/5">
+                                <Send className="w-10 h-10 text-blue-500" />
                             </div>
 
-                            <div className="space-y-4">
-                                <h3 className="text-3xl font-black italic uppercase tracking-tighter">DATA EXPORTED</h3>
-                                <p className="text-gray-400 font-bold leading-relaxed">
-                                    Final report successfully generated. Synchronize to cloud mail server now?
+                            <div className="space-y-3">
+                                <h3 className="text-2xl font-black italic uppercase tracking-tighter">TELEMETRY EXPORTED</h3>
+                                <p className="text-gray-500 text-xs font-bold leading-relaxed px-4">
+                                    Report generation finalized. Dispatch to cloud mail protocol?
                                 </p>
-                                <div className="p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex items-center justify-center gap-2">
-                                    <Mail className="w-4 h-4 text-blue-400" />
-                                    <p className="text-blue-400 font-black text-xs tracking-[0.2em]">{user?.email?.toUpperCase()}</p>
+                                <div className="p-3 bg-blue-600/5 border border-blue-500/10 rounded-xl flex items-center justify-center gap-2 mx-4">
+                                    <Mail className="w-3.5 h-3.5 text-blue-500/60" />
+                                    <p className="text-blue-400 font-black text-[9px] tracking-[0.1em]">{user?.email?.toUpperCase()}</p>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6 pt-4">
+                            <div className="grid grid-cols-2 gap-4 pt-2">
                                 <Button
-                                    variant="secondary"
+                                    variant="ghost"
                                     onClick={() => setShowEmailModal(false)}
-                                    className="py-5"
+                                    className="py-3 text-[10px] uppercase font-black tracking-widest text-gray-500 border-white/5 hover:text-white"
                                 >
-                                    IGOR
+                                    ABORT
                                 </Button>
                                 <Button
                                     onClick={handleEmailReport}
                                     disabled={emailing}
-                                    className="py-5"
+                                    className="py-3 text-[10px] uppercase font-black tracking-widest italic"
                                     icon={emailing ? Loader2 : Send}
                                 >
-                                    {emailing ? 'SYNCING...' : 'YES'}
+                                    {emailing ? 'SYNC' : 'DISPATCH'}
                                 </Button>
                             </div>
                         </motion.div>

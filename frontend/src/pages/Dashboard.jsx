@@ -2,17 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
     Droplet, TrendingUp, AlertTriangle, IndianRupee, 
-    Plus, ChevronRight, Activity, 
-    PieChart as PieIcon, BarChart as BarIcon, 
-    Zap, CreditCard, History, LayoutDashboard, LogOut, Lightbulb, Bell, Shield
+    ChevronRight, Activity, 
+    PieChart as PieIcon, 
+    Zap, Shield, Lightbulb
 } from 'lucide-react';
 import { 
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend
 } from 'recharts';
 import axios from 'axios';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
+import { AnimatePresence } from 'framer-motion';
 import AIChatBot from '../components/AIChatBot';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -68,152 +66,154 @@ const Dashboard = () => {
             loading={loading}
         >
             {!latestUsage ? (
-                <Card className="flex flex-col items-center justify-center p-20 text-center space-y-8">
-                    <div className="p-8 bg-blue-500/10 rounded-full">
-                        <Droplet className="w-16 h-16 text-blue-400" />
+                <Card className="flex flex-col items-center justify-center p-16 text-center space-y-6">
+                    <div className="p-6 bg-blue-500/10 rounded-full">
+                        <Droplet className="w-12 h-12 text-blue-400" />
                     </div>
-                    <div className="max-w-md space-y-4">
-                        <h2 className="text-3xl font-bold italic">No Data Available Yet</h2>
-                        <p className="text-gray-400 text-lg">Start your journey towards water efficiency by entering your first weekly usage data.</p>
+                    <div className="max-w-md space-y-3">
+                        <h2 className="text-2xl font-bold italic tracking-tighter uppercase">No Baseline Data</h2>
+                        <p className="text-gray-400 text-sm font-medium">Initialize your industrial telemetry by entering your first weekly usage data.</p>
                         <Button 
                             onClick={() => navigate('/usage')}
                             className="mt-4"
                             icon={ChevronRight}
                         >
-                            Enter First Data
+                            Log Usage
                         </Button>
                     </div>
                 </Card>
             ) : (
-                <div className="space-y-10">
+                <div className="space-y-8">
                     {/* Summary Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <Card delay={0.1} className="border-l-4 border-blue-400">
-                            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-2">Weekly Usage</p>
-                            <div className="flex items-end gap-2">
-                                <h3 className="text-4xl font-black">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                        <Card delay={0.1} className="border-l-4 border-blue-500 p-5">
+                            <p className="text-gray-500 text-[9px] font-black uppercase tracking-widest mb-1.5 leading-none">Weekly Usage</p>
+                            <div className="flex items-end gap-2 leading-none">
+                                <h3 className="text-3xl font-black italic">
                                     <AnimatedNumber value={latestUsage.totalLiters || 0} suffix="L" />
                                 </h3>
-                                <div className={`flex items-center text-sm mb-1 font-bold ${latestUsage.leakAlert ? 'text-red-400' : 'text-green-400'}`}>
-                                    {latestUsage.leakAlert ? <AlertTriangle className="w-4 h-4 mr-1" /> : <TrendingUp className="w-4 h-4 mr-1" />}
-                                    <span>{latestUsage.leakAlert ? 'High' : 'Stable'}</span>
+                                <div className={`flex items-center text-[10px] pb-1 font-black uppercase tracking-tight ${latestUsage.leakAlert ? 'text-red-500' : 'text-green-500'}`}>
+                                    {latestUsage.leakAlert ? <AlertTriangle className="w-3 h-3 mr-0.5" /> : <TrendingUp className="w-3 h-3 mr-0.5" />}
+                                    <span>{latestUsage.leakAlert ? 'Risk' : 'Steady'}</span>
                                 </div>
                             </div>
                         </Card>
 
-                        <Card delay={0.2} className="border-l-4 border-green-400">
-                            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-2">Daily Average</p>
-                            <h3 className="text-4xl font-black">
+                        <Card delay={0.2} className="border-l-4 border-green-500 p-5">
+                            <p className="text-gray-500 text-[9px] font-black uppercase tracking-widest mb-1.5 leading-none">Daily Average</p>
+                            <h3 className="text-3xl font-black italic leading-none">
                                 <AnimatedNumber value={Math.round((latestUsage.totalLiters || 0) / 7)} suffix="L" />
                             </h3>
-                            <p className="text-[10px] text-gray-500 font-bold mt-2 tracking-widest">CURRENT CYCLE</p>
+                            <p className="text-[10px] text-gray-600 font-bold mt-2 tracking-widest">REAL-TIME</p>
                         </Card>
 
-                        <Card delay={0.3} className="border-l-4 border-yellow-400">
-                            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-2">Estimated Bill</p>
-                            <div className="flex items-center gap-2">
-                                <h3 className="text-4xl font-black flex items-center">
-                                    <IndianRupee className="w-6 h-6 mr-1" />
+                        <Card delay={0.3} className="border-l-4 border-yellow-500 p-5">
+                            <p className="text-gray-500 text-[9px] font-black uppercase tracking-widest mb-1.5 leading-none">Estimated Bill</p>
+                            <div className="flex items-center gap-1.5 leading-none">
+                                <h3 className="text-3xl font-black italic flex items-center">
+                                    <IndianRupee className="w-5 h-5 mr-0.5 mt-0.5" />
                                     <AnimatedNumber value={latestBill?.amount || 0} />
                                 </h3>
                             </div>
-                            <p className={`text-[10px] font-bold mt-2 tracking-widest ${latestBill?.status === 'Paid' ? 'text-green-400' : 'text-yellow-400'}`}>
-                                {latestBill?.status?.toUpperCase() || 'PENDING'}
+                            <p className={`text-[10px] font-black mt-2 tracking-widest uppercase ${latestBill?.status === 'Paid' ? 'text-green-500' : 'text-yellow-500'}`}>
+                                {latestBill?.status || 'PENDING'}
                             </p>
                         </Card>
 
                         <Card 
                             delay={0.4} 
-                            className={`border-l-4 cursor-pointer ${hasActiveAlerts ? 'border-red-500 bg-red-500/5' : 'border-blue-400'}`}
+                            className={`border-l-4 cursor-pointer p-5 transition-all ${hasActiveAlerts ? 'border-red-500 bg-red-500/5' : 'border-blue-500'}`}
                             onClick={() => navigate('/alerts')}
                         >
-                            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-2">System Status</p>
-                            <div className={`flex items-center gap-3 ${hasActiveAlerts ? 'text-red-400' : 'text-green-400'}`}>
-                                {hasActiveAlerts ? <AlertTriangle className="w-6 h-6" /> : <Shield className="w-6 h-6" />}
-                                <h3 className="text-2xl font-black uppercase italic">{systemStatus}</h3>
+                            <p className="text-gray-500 text-[9px] font-black uppercase tracking-widest mb-1.5 leading-none">Security Status</p>
+                            <div className={`flex items-center gap-2.5 leading-none ${hasActiveAlerts ? 'text-red-500' : 'text-green-500'}`}>
+                                {hasActiveAlerts ? <AlertTriangle className="w-5 h-5" /> : <Shield className="w-5 h-5" />}
+                                <h3 className="text-xl font-black italic uppercase tracking-tighter">{systemStatus}</h3>
                             </div>
-                            <p className="text-[10px] text-gray-500 font-bold mt-2 tracking-widest">
-                                {hasActiveAlerts ? `${alerts.filter(a => !a.isRead).length} ISSUES DETECTED` : 'ALL SYSTEMS NOMINAL'}
+                            <p className="text-[10px] text-gray-600 font-bold mt-2 tracking-widest">
+                                {hasActiveAlerts ? `${alerts.filter(a => !a.isRead).length} ANOMALIES` : 'ALL FLOWS NOMINAL'}
                             </p>
                         </Card>
                     </div>
 
                     {/* Middle Section */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Pie Chart */}
-                        <Card delay={0.5}>
-                            <div className="flex items-center justify-between mb-8">
+                        <Card delay={0.5} className="p-6">
+                            <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-blue-500/10 rounded-xl">
-                                        <PieIcon className="text-blue-400 w-6 h-6" />
+                                    <div className="p-3 bg-blue-500/10 border border-blue-500/10 rounded-xl">
+                                        <PieIcon className="text-blue-500 w-5 h-5" />
                                     </div>
-                                    <h3 className="text-2xl font-bold tracking-tight">Consumption Map</h3>
+                                    <h3 className="text-xl font-bold tracking-tight">Consumption Matrix</h3>
                                 </div>
-                                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Dynamic Distribution</span>
+                                <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Telemetry</span>
                             </div>
-                            <div className="h-80 relative">
+                            <div className="h-64 relative">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
                                         <Pie
                                             data={chartData}
-                                            innerRadius={70}
-                                            outerRadius={100}
-                                            paddingAngle={8}
+                                            innerRadius={60}
+                                            outerRadius={85}
+                                            paddingAngle={6}
                                             dataKey="value"
-                                            animationDuration={2000}
-                                            animationBegin={500}
+                                            animationDuration={1500}
+                                            animationBegin={300}
                                         >
                                             {chartData.map((entry, index) => (
                                                 <Cell 
                                                     key={`cell-${index}`} 
                                                     fill={COLORS[index % COLORS.length]}
-                                                    stroke="rgba(255,255,255,0.05)"
+                                                    stroke="rgba(255,255,255,0.02)"
                                                     strokeWidth={2}
                                                 />
                                             ))}
                                         </Pie>
                                         <Tooltip 
                                             contentStyle={{ 
-                                                backgroundColor: 'rgba(15, 23, 42, 0.9)', 
-                                                backdropFilter: 'blur(10px)',
+                                                backgroundColor: 'rgba(15, 23, 42, 0.95)', 
+                                                backdropFilter: 'blur(12px)',
                                                 border: '1px solid rgba(255,255,255,0.1)', 
-                                                borderRadius: '1.5rem', 
-                                                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' 
+                                                borderRadius: '1rem', 
+                                                boxShadow: '0 15px 30px rgba(0, 0, 0, 0.6)',
+                                                fontSize: '12px',
+                                                fontWeight: '900'
                                             }}
-                                            itemStyle={{ color: '#fff', fontWeight: 'bold' }}
+                                            itemStyle={{ color: '#fff', textTransform: 'uppercase' }}
                                         />
-                                        <Legend verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold', fontSize: '12px' }} />
+                                        <Legend verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '15px', fontWeight: '900', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em' }} />
                                     </PieChart>
                                 </ResponsiveContainer>
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <Droplet className="text-blue-500/20 w-12 h-12" />
+                                    <Droplet className="text-blue-500/10 w-8 h-8" />
                                 </div>
                             </div>
                         </Card>
 
                         {/* Suggestions Summary */}
-                        <Card delay={0.6}>
-                            <div className="flex items-center justify-between mb-8">
+                        <Card delay={0.6} className="p-6">
+                            <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-yellow-400/10 rounded-xl">
-                                        <Zap className="text-yellow-400 w-6 h-6" />
+                                    <div className="p-3 bg-yellow-500/10 border border-yellow-500/10 rounded-xl">
+                                        <Zap className="text-yellow-500 w-5 h-5" />
                                     </div>
-                                    <h3 className="text-2xl font-bold tracking-tight">AI Insights</h3>
+                                    <h3 className="text-xl font-bold tracking-tight">AI Protocols</h3>
                                 </div>
-                                <Button variant="ghost" onClick={() => navigate('/suggestions')}>
-                                    View All <ChevronRight className="w-4 h-4" />
+                                <Button variant="ghost" onClick={() => navigate('/suggestions')} className="text-[9px] font-black tracking-widest uppercase py-1 px-3">
+                                    Expand <ChevronRight className="w-3 h-3 ml-1" />
                                 </Button>
                             </div>
-                            <div className="space-y-5">
+                            <div className="space-y-4">
                                 {latestUsage && latestUsage.suggestions && latestUsage.suggestions.slice(0, 3).map((s, i) => (
-                                    <div key={i} className="p-5 bg-white/5 rounded-[1.5rem] border border-white/5 hover:border-blue-500/20 hover:bg-white/10 transition-all group cursor-default">
+                                    <div key={i} className="p-4 bg-white/[0.02] rounded-2xl border border-white/5 hover:border-blue-500/20 hover:bg-white/[0.05] transition-all group cursor-default">
                                         <div className="flex items-start gap-4">
-                                            <div className="p-3 bg-blue-500/10 rounded-xl mt-1 border border-blue-500/10 group-hover:scale-110 transition-transform">
-                                                <Lightbulb className="w-5 h-5 text-blue-400" />
+                                            <div className="p-2.5 bg-blue-500/10 rounded-lg mt-0.5 border border-blue-500/10 group-hover:scale-105 transition-transform">
+                                                <Lightbulb className="w-4 h-4 text-blue-500" />
                                             </div>
                                             <div className="flex-1">
-                                                <p className="text-[10px] font-black text-blue-500/80 mb-2 uppercase tracking-[0.2em]">{s.category}</p>
-                                                <p className="text-white font-medium line-clamp-2 leading-relaxed italic">"{s.tip}"</p>
+                                                <p className="text-[8px] font-black text-blue-500/60 mb-1 uppercase tracking-[0.2em]">{s.category}</p>
+                                                <p className="text-gray-300 font-medium text-sm leading-relaxed italic line-clamp-1 group-hover:text-white transition-colors">"{s.tip}"</p>
                                             </div>
                                         </div>
                                     </div>

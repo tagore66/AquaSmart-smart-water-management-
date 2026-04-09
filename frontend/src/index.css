@@ -15,7 +15,7 @@
 }
 
 .glass-card {
-  @apply bg-white/[0.03] backdrop-blur-xl border border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] rounded-[2rem] p-8 transition-all duration-500 ease-in-out;
+  @apply bg-white/[0.03] backdrop-blur-xl border border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] rounded-[1.25rem] p-6 transition-all duration-500 ease-in-out;
 }
 
 .glass-card:hover {
@@ -23,11 +23,11 @@
 }
 
 .btn-primary {
-  @apply px-8 py-3 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold transition-all duration-300 shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_15px_30px_rgba(37,99,235,0.4)] active:scale-95 flex items-center justify-center gap-2;
+  @apply px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold transition-all duration-300 shadow-[0_8px_16px_rgba(37,99,235,0.2)] hover:shadow-[0_12px_24px_rgba(37,99,235,0.4)] active:scale-95 flex items-center justify-center gap-2;
 }
 
 .input-field {
-  @apply w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/10 outline-none transition-all duration-400 text-white placeholder:text-gray-500 placeholder:font-light;
+  @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/10 outline-none transition-all duration-400 text-white placeholder:text-gray-500 placeholder:font-light;
 }
 
 /* Custom scrollbar */

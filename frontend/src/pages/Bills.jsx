@@ -78,62 +78,62 @@ const Bills = () => {
 
     return (
         <PageWrapper
-            title="Billing History"
+            title="Fiscal Records"
             subtitle="View and manage your fiscal water lifecycle."
             loading={loading}
         >
-            <div className="space-y-6">
+            <div className="space-y-5">
                 {bills.length === 0 && !loading ? (
-                    <Card className="text-center py-32 animate-in fade-in zoom-in duration-700">
-                        <IndianRupee className="w-20 h-20 text-gray-800 mx-auto mb-6" />
-                        <h2 className="text-3xl font-black italic tracking-tight mb-3">No Bills Generated</h2>
-                        <p className="text-gray-500 max-w-xs mx-auto font-medium">Synchronize your usage data to initialize your billing cycles.</p>
-                        <Button className="mt-10 mx-auto" onClick={() => navigate('/usage')}>
-                            Initialize Usage Log
+                    <Card className="text-center py-24 animate-in fade-in zoom-in duration-500">
+                        <IndianRupee className="w-16 h-16 text-white/5 mx-auto mb-5" />
+                        <h2 className="text-2xl font-black italic tracking-tighter mb-2 uppercase">Zero Billing Cycles</h2>
+                        <p className="text-gray-500 max-w-[240px] mx-auto text-xs font-medium italic">Synchronize usage telemetry to initialize your fiscal cycles.</p>
+                        <Button className="mt-8 mx-auto py-2.5 px-6 text-xs font-black italic uppercase tracking-tighter" onClick={() => navigate('/usage')}>
+                            Sync usage log
                         </Button>
                     </Card>
                 ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         {bills.map((bill, i) => (
                             <Card
                                 key={bill._id}
                                 delay={i * 0.05}
-                                className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-8"
+                                className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 border-white/5 bg-gradient-to-br from-white/[0.01] to-transparent"
                             >
-                                <div className="flex items-center gap-8">
-                                    <div className={`p-6 rounded-[2rem] border transition-all duration-500 ${bill.status === 'Paid' ? 'bg-green-500/10 text-green-400 border-green-500/20 shadow-[0_0_30px_rgba(34,197,94,0.1)]' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 shadow-[0_0_30px_rgba(234,179,8,0.1)]'}`}>
-                                        {bill.status === 'Paid' ? <CheckCircle className="w-10 h-10" /> : <Clock className="w-10 h-10" />}
+                                <div className="flex items-center gap-6">
+                                    <div className={`p-4 rounded-xl border transition-all duration-500 ${bill.status === 'Paid' ? 'bg-green-500/10 text-green-400 border-green-500/10' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/10'}`}>
+                                        {bill.status === 'Paid' ? <CheckCircle className="w-6 h-6" /> : <Clock className="w-6 h-6" />}
                                     </div>
                                     <div>
-                                        <div className="flex items-center gap-4 mb-2">
-                                            <h3 className="text-4xl font-black italic tracking-tighter">
+                                        <div className="flex items-center gap-3 mb-1.5 leading-none">
+                                            <h3 className="text-3xl font-black italic tracking-tighter">
                                                 ₹<AnimatedNumber value={bill.amount} />
                                             </h3>
-                                            <span className={`text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest border ${bill.status === 'Paid' ? 'border-green-500/30 text-green-400 bg-green-500/5' : 'border-yellow-500/30 text-yellow-400 bg-yellow-500/5'}`}>
+                                            <span className={`text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest border shrink-0 ${bill.status === 'Paid' ? 'border-green-500/20 text-green-400 bg-green-500/5' : 'border-yellow-500/20 text-yellow-400 bg-yellow-500/5'}`}>
                                                 {bill.status}
                                             </span>
                                         </div>
-                                        <p className="text-gray-500 font-bold text-sm flex items-center gap-2 italic">
-                                            <Calendar className="w-4 h-4" />
-                                            Cycle: Week of {new Date(bill.usage.weekStarting).toLocaleDateString()}
+                                        <p className="text-gray-500 font-bold text-[10px] flex items-center gap-1.5 italic uppercase tracking-tighter leading-none">
+                                            <Calendar className="w-3.5 h-3.5" />
+                                            Week of {new Date(bill.usage.weekStarting).toLocaleDateString()}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-6">
+                                <div className="flex items-center gap-4">
                                     <Link 
                                         to={`/bills/${bill._id}`} 
-                                        className="p-5 bg-white/5 hover:bg-blue-600/10 border border-white/5 rounded-2xl transition-all duration-300 group"
+                                        className="p-3.5 bg-white/5 hover:bg-blue-600/10 border border-white/5 rounded-xl transition-all duration-300 group"
                                     >
-                                        <ChevronRight className="w-6 h-6 text-gray-500 group-hover:text-blue-400 transition-transform group-hover:translate-x-1" />
+                                        <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-blue-500 transition-transform group-hover:translate-x-0.5" />
                                     </Link>
                                     {bill.status === 'Unpaid' && (
                                         <Button
                                             onClick={() => handlePay(bill)}
-                                            className="px-10 py-5 text-lg"
+                                            className="px-6 py-2.5 text-xs font-black italic uppercase tracking-tighter"
                                             icon={CreditCard}
                                         >
-                                            Secure Checkout
+                                            Checkout
                                         </Button>
                                     )}
                                 </div>

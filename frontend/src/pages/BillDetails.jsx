@@ -4,7 +4,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { 
     IndianRupee, Calendar, CreditCard, CheckCircle, 
-    ChevronLeft, Droplet, Layers, ArrowRight, Clock
+    ChevronLeft, Droplet, Layers, Clock
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import PageWrapper from '../components/layout/PageWrapper';
@@ -81,34 +81,34 @@ const BillDetails = () => {
 
     if (!loading && !bill) return (
         <PageWrapper title="Error" subtitle="Resource not found.">
-            <Card className="p-12 text-center">
-                <p className="text-red-400 font-bold">The requested bill lifecycle could not be retrieved.</p>
-                <Button className="mt-8 mx-auto" onClick={() => navigate('/bills')}>Return to Archive</Button>
+            <Card className="p-10 text-center">
+                <p className="text-red-400 font-bold text-sm">The requested bill lifecycle could not be retrieved.</p>
+                <Button className="mt-8 mx-auto py-2.5 px-6 text-xs font-black uppercase tracking-tighter" onClick={() => navigate('/bills')}>Return to Archive</Button>
             </Card>
         </PageWrapper>
     );
 
     return (
         <PageWrapper
-            title="Bill Summary"
+            title="Fiscal Breakdown"
             subtitle={bill ? `Generated on ${new Date(bill.createdAt).toDateString()}` : "Syncing financial data..."}
             loading={loading}
             actions={
                 bill && (
-                    <div className={`px-6 py-2 rounded-2xl border flex items-center gap-3 ${bill.status === 'Paid' ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'}`}>
-                        {bill.status === 'Paid' ? <CheckCircle className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
-                        <span className="font-black text-sm uppercase tracking-widest leading-none">{bill.status}</span>
+                    <div className={`px-4 py-1.5 rounded-xl border flex items-center gap-2.5 ${bill.status === 'Paid' ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400'}`}>
+                        {bill.status === 'Paid' ? <CheckCircle className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
+                        <span className="font-black text-[9px] uppercase tracking-[0.2em] leading-none">{bill.status}</span>
                     </div>
                 )
             }
         >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <Card className="lg:col-span-2 space-y-10 p-10">
-                    <div className="flex justify-between items-center border-b border-white/5 pb-8">
-                        <h2 className="text-2xl font-black italic tracking-tighter flex items-center gap-3">
-                            <Layers className="text-blue-500" /> SLAB BREAKDOWN
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <Card className="lg:col-span-2 space-y-8 p-8 border-white/5">
+                    <div className="flex justify-between items-center border-b border-white/5 pb-6">
+                        <h2 className="text-xl font-black italic tracking-tighter flex items-center gap-2.5">
+                            <Layers className="text-blue-500 w-5 h-5" /> PERFORMANCE SLABS
                         </h2>
-                        <div className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Pricing Matrix v2.1</div>
+                        <div className="text-[9px] font-black text-gray-600 uppercase tracking-widest leading-none">Standard Matrix v3.0</div>
                     </div>
                     
                     <div className="space-y-4">
@@ -118,69 +118,81 @@ const BillDetails = () => {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.1 }}
-                                className="flex items-center justify-between p-6 bg-white/[0.02] rounded-[2rem] border border-white/5 hover:border-blue-500/20 transition-all duration-500"
+                                className="flex items-center justify-between p-5 bg-white/[0.015] rounded-2xl border border-white/5 hover:border-blue-500/10 transition-all duration-300"
                             >
                                 <div>
-                                    <p className="font-black text-2xl tracking-tighter italic">{slab.range}</p>
-                                    <p className="text-xs font-bold text-gray-500 mt-1 uppercase tracking-widest">Rate: ₹{slab.rate}/L × {slab.liters}L</p>
+                                    <p className="font-black text-xl tracking-tighter italic leading-none mb-1.5">{slab.range}</p>
+                                    <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest leading-none italic">Rate: ₹{slab.rate}/L × {slab.liters}L</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-black text-3xl italic">₹{slab.cost}</p>
+                                    <p className="font-black text-2xl italic leading-none">₹{slab.cost}</p>
                                 </div>
                             </motion.div>
                         ))}
                     </div>
 
-                    <div className="pt-10 border-t border-white/5 flex items-center justify-between bg-gradient-to-r from-transparent to-blue-600/5 -mx-10 px-10 rounded-b-[3rem]">
-                        <span className="text-xl font-black italic text-gray-500 uppercase tracking-widest">Aggregate Due</span>
-                        <div className="text-5xl font-black italic tracking-tighter text-blue-400 flex items-center gap-2">
+                    <div className="pt-8 border-t border-white/5 flex items-center justify-between bg-gradient-to-r from-transparent to-blue-500/[0.03] -mx-8 px-8 rounded-b-2xl">
+                        <span className="text-sm font-black italic text-gray-500 uppercase tracking-widest">Aggregate Liability</span>
+                        <div className="text-4xl font-black italic tracking-tighter text-blue-400 flex items-center gap-1.5 leading-none">
                             ₹<AnimatedNumber value={bill?.amount || 0} />
                         </div>
                     </div>
                 </Card>
 
-                <div className="space-y-8 h-full">
-                    <Card className="p-8 space-y-8 flex flex-col justify-between h-full min-h-[400px]">
+                <div className="space-y-6">
+                    <Card className="p-8 flex flex-col justify-between h-auto gap-10 border-white/5">
                         <div className="space-y-8">
-                            <h3 className="text-xl font-black italic uppercase flex items-center gap-3 tracking-tight">
-                                <Droplet className="text-blue-500" /> Usage Vector
+                            <h3 className="text-lg font-black italic uppercase flex items-center gap-2.5 tracking-tight text-white/80">
+                                <Droplet className="text-blue-500 w-5 h-5" /> Usage Context
                             </h3>
                             <div className="space-y-6">
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-2">Tracking Interval</p>
-                                    <p className="font-black text-lg italic text-gray-200">{new Date(bill?.usage.weekStarting).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                    <p className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] mb-1.5 leading-none">Sync Interval</p>
+                                    <p className="font-black text-base italic text-gray-300 leading-none">{new Date(bill?.usage.weekStarting).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-2">Measured Volume</p>
-                                    <p className="font-black text-4xl italic tracking-tighter text-white">
-                                        <AnimatedNumber value={bill?.usage.totalLiters || 0} /> <span className="text-sm font-bold text-gray-600">Liters</span>
-                                    </p>
+                                    <p className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] mb-1.5 leading-none">Total Telemetry</p>
+                                    <div className="flex items-end gap-1.5 leading-none">
+                                        <p className="font-black text-4xl italic tracking-tighter text-white leading-none">
+                                            <AnimatedNumber value={bill?.usage.totalLiters || 0} />
+                                        </p>
+                                        <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest pb-1">Litres</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="pt-8">
+                        <div className="pt-4">
                             {bill?.status === 'Unpaid' ? (
                                 <Button 
                                     onClick={handlePay}
-                                    className="w-full py-6 text-xl group"
+                                    className="w-full py-4 text-sm font-black italic uppercase tracking-tighter"
                                     icon={CreditCard}
                                 >
-                                    Proceed to Pay
+                                    Proceed to Checkout
                                 </Button>
                             ) : (
-                                <div className="p-8 bg-green-500/10 border border-green-500/20 rounded-[2.5rem] text-center space-y-4">
-                                    <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(34,197,94,0.2)]">
-                                        <CheckCircle className="w-10 h-10 text-green-400" />
+                                <div className="p-6 bg-green-500/[0.03] border border-green-500/10 rounded-2xl text-center space-y-4">
+                                    <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto ring-4 ring-green-500/5 transition-transform hover:scale-110 duration-500">
+                                        <CheckCircle className="w-8 h-8 text-green-400" />
                                     </div>
                                     <div>
-                                        <p className="text-green-400 font-black text-xl italic uppercase tracking-tighter">Synchronized</p>
-                                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-2">ID: {bill?.paymentId}</p>
+                                        <p className="text-green-500 font-black text-lg italic uppercase tracking-tighter">SUCCESS</p>
+                                        <p className="text-[8px] font-black text-gray-600 uppercase tracking-[0.3em] mt-1.5">AUTH: {bill?.paymentId?.slice(-12).toUpperCase()}</p>
                                     </div>
                                 </div>
                             )}
                         </div>
                     </Card>
+                    
+                    <Button 
+                        variant="ghost" 
+                        onClick={() => navigate('/bills')} 
+                        className="w-full py-3 text-[10px] font-black uppercase tracking-widest text-gray-600 hover:text-white"
+                        icon={ChevronLeft}
+                    >
+                        Return to Archives
+                    </Button>
                 </div>
             </div>
         </PageWrapper>

@@ -27,7 +27,7 @@ const Suggestions = () => {
             
             if (cleanLine.startsWith('##') || cleanLine.startsWith('**##')) {
                 return (
-                    <h3 key={idx} className="text-xl font-black italic uppercase tracking-tight mb-4 text-blue-400 mt-6 first:mt-0">
+                    <h3 key={idx} className="text-lg font-black italic uppercase tracking-tight mb-3 text-blue-400 mt-5 first:mt-0">
                         {cleanLine.replace(/[#*]/g, '').trim()}
                     </h3>
                 );
@@ -35,19 +35,19 @@ const Suggestions = () => {
             if (cleanLine.startsWith('* **') || cleanLine.startsWith('- **')) {
                 const parts = cleanLine.split('**');
                 return (
-                    <li key={idx} className="ml-4 mb-3 list-none flex items-start gap-3">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
-                        <span>
-                            <strong className="text-white font-black italic uppercase text-xs tracking-widest">{parts[1]}</strong>
-                            <span className="text-gray-400 text-base font-medium ml-2">{parts[2]}</span>
+                    <li key={idx} className="ml-3 mb-2.5 list-none flex items-start gap-2.5">
+                        <div className="w-1 h-1 rounded-full bg-blue-500 mt-1.5 shrink-0 shadow-[0_0_6px_rgba(59,130,246,0.4)]"></div>
+                        <span className="leading-snug">
+                            <strong className="text-white font-black italic uppercase text-[10px] tracking-widest">{parts[1]}</strong>
+                            <span className="text-gray-400 text-sm font-medium ml-1.5">{parts[2]}</span>
                         </span>
                     </li>
                 );
             }
             if (cleanLine.startsWith('* ') || cleanLine.startsWith('- ')) {
                 return (
-                    <li key={idx} className="ml-4 mb-3 list-none flex items-start gap-3 text-gray-400 text-base font-medium">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0"></div>
+                    <li key={idx} className="ml-3 mb-2.5 list-none flex items-start gap-2.5 text-gray-400 text-sm font-medium leading-snug">
+                        <div className="w-1 h-1 rounded-full bg-blue-500 mt-1.5 shrink-0"></div>
                         {cleanLine.substring(2)}
                     </li>
                 );
@@ -57,12 +57,12 @@ const Suggestions = () => {
             if (formattedLine.includes('**')) {
                 const parts = formattedLine.split('**');
                 return (
-                    <p key={idx} className="mb-4 text-gray-400 text-base font-medium leading-relaxed">
-                        {parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="text-white font-black italic uppercase text-xs tracking-widest">{part}</strong> : part)}
+                    <p key={idx} className="mb-3 text-gray-400 text-sm font-medium leading-relaxed">
+                        {parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="text-white font-black italic uppercase text-[10px] tracking-widest">{part}</strong> : part)}
                     </p>
                 );
             }
-            return <p key={idx} className="mb-4 text-gray-400 text-base font-medium leading-relaxed italic">"{cleanLine}"</p>;
+            return <p key={idx} className="mb-3 text-gray-400 text-sm font-medium leading-relaxed italic">"{cleanLine}"</p>;
         });
     };
 
@@ -87,7 +87,7 @@ const Suggestions = () => {
         if (aiResponses[category]) return;
 
         setAnalyzingCat(category);
-        setRetryMsg("Initializing Generative Engine...");
+        setRetryMsg("Initializing Node...");
         
         let attempts = 0;
         const maxRetries = 2;
@@ -113,12 +113,12 @@ const Suggestions = () => {
                 
                 if (attempts < maxRetries) {
                     attempts++;
-                    setRetryMsg(`Engine Congestion, retrying... (${attempts}/${maxRetries})`);
-                    await new Promise(r => setTimeout(r, 2000));
+                    setRetryMsg(`Retrying... (${attempts}/${maxRetries})`);
+                    await new Promise(r => setTimeout(r, 1500));
                     continue;
                 }
 
-                const errorMsg = error.response?.data?.error || error.response?.data?.message || "GenAI Node Offline. System experiencing high demand latency.";
+                const errorMsg = error.response?.data?.error || error.response?.data?.message || "GenAI Node Latency Error.";
                 setAiResponses(prev => ({ ...prev, [category]: `LATENCY_ERROR: ${errorMsg}` }));
                 break;
             }
@@ -135,56 +135,56 @@ const Suggestions = () => {
             loading={loading}
         >
             {!latestUsage && !loading ? (
-                <Card className="flex flex-col items-center justify-center py-40 text-center space-y-8 animate-in fade-in zoom-in duration-700">
+                <Card className="flex flex-col items-center justify-center py-24 text-center space-y-6 animate-in fade-in zoom-in duration-500 border-white/5">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full"></div>
-                        <div className="relative p-10 bg-white/5 rounded-[3rem] border border-white/10">
-                            <Lightbulb className="w-20 h-20 text-yellow-400" />
+                        <div className="absolute inset-0 bg-yellow-500/10 blur-3xl rounded-full"></div>
+                        <div className="relative p-8 bg-white/5 rounded-2xl border border-white/10">
+                            <Lightbulb className="w-14 h-14 text-yellow-500/50" />
                         </div>
                     </div>
-                    <div className="max-w-md space-y-4">
-                        <h2 className="text-3xl font-black italic tracking-tighter uppercase">No Insights Available</h2>
-                        <p className="text-gray-500 font-medium leading-relaxed italic">"Initialize your first usage lifecycle to populate optimization vectors."</p>
-                        <Button className="mt-8 mx-auto" onClick={() => navigate('/usage')}>Initialize Log</Button>
+                    <div className="max-w-xs space-y-2">
+                        <h2 className="text-xl font-black italic tracking-tighter uppercase text-white">No Insights</h2>
+                        <p className="text-gray-500 text-xs font-medium leading-relaxed italic">Initialize your first usage lifecycle to populate optimization vectors.</p>
+                        <Button className="mt-6 mx-auto py-2 px-6 text-[10px] font-black italic tracking-tighter uppercase" onClick={() => navigate('/usage')}>Initialize Log</Button>
                     </div>
                 </Card>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {latestUsage?.suggestions.map((suggestion, i) => (
                         <Card 
                             key={i} 
                             delay={i * 0.1}
-                            className="relative overflow-hidden group flex flex-col p-10 border-white/5"
+                            className="relative overflow-hidden group flex flex-col p-8 border-white/5 group bg-gradient-to-br from-white/[0.01] to-transparent"
                         >
-                            <div className="absolute -top-10 -right-10 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-700 -rotate-12 group-hover:rotate-0 group-hover:scale-110">
-                                <Activity className="w-64 h-64 text-blue-400" />
+                            <div className="absolute -top-6 -right-6 opacity-[0.02] group-hover:opacity-[0.05] transition-all duration-700 -rotate-12 group-hover:rotate-0 group-hover:scale-110">
+                                <Activity className="w-48 h-48 text-blue-400" />
                             </div>
                             
-                            <div className="flex items-start justify-between gap-6 mb-8 relative z-10">
-                                <div className="flex items-center gap-5">
-                                    <div className="p-5 bg-yellow-400/10 rounded-[1.5rem] ring-4 ring-yellow-400/5 border border-yellow-400/10 group-hover:bg-yellow-400/20 transition-all duration-500">
-                                        <Lightbulb className="text-yellow-400 w-8 h-8" />
+                            <div className="flex items-start justify-between gap-5 mb-6 relative z-10">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-4 bg-yellow-500/10 rounded-xl ring-2 ring-yellow-400/5 border border-yellow-500/10 group-hover:bg-yellow-400/20 transition-all duration-500">
+                                        <Lightbulb className="text-yellow-500 w-6 h-6" />
                                     </div>
                                     <div>
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">{suggestion.category}</span>
-                                            <div className="w-1 h-1 rounded-full bg-gray-600"></div>
-                                            <span className={`text-[10px] font-black uppercase tracking-widest ${suggestion.impact === 'High' ? 'text-red-400' : 'text-emerald-400'}`}>{suggestion.impact} IMPACT</span>
+                                        <div className="flex items-center gap-2 leading-none">
+                                            <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest">{suggestion.category}</span>
+                                            <div className="w-[3px] h-[3px] rounded-full bg-gray-700"></div>
+                                            <span className={`text-[9px] font-black uppercase tracking-widest ${suggestion.impact === 'High' ? 'text-red-500/80' : 'text-emerald-500/80'}`}>{suggestion.impact} IMPACT</span>
                                         </div>
-                                        <h3 className="text-2xl font-black italic tracking-tight text-white mt-1">Optimization Vector</h3>
+                                        <h3 className="text-lg font-black italic tracking-tight text-white mt-1 uppercase">Optimization Vector</h3>
                                     </div>
                                 </div>
                             </div>
 
-                            <p className="text-gray-400 text-xl font-medium leading-relaxed mb-auto italic relative z-10">
+                            <p className="text-gray-400 text-base font-medium leading-relaxed mb-auto italic relative z-10">
                                 "{suggestion.tip}"
                             </p>
 
-                            <div className="mt-12 relative z-10">
+                            <div className="mt-8 relative z-10">
                                 <Button 
                                     variant="ghost"
                                     onClick={() => handleLearnMore(suggestion)}
-                                    className="px-0 text-blue-400 hover:text-blue-300 transition-all gap-3 text-sm font-black uppercase tracking-[0.2em]"
+                                    className="px-0 h-auto py-0 text-blue-500 hover:text-blue-400 transition-all gap-2 text-[10px] font-black uppercase tracking-[0.2em] w-auto border-none"
                                     icon={ChevronRight}
                                 >
                                     Activate AI Deep Dive
@@ -204,100 +204,100 @@ const Suggestions = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSelectedSuggestion(null)}
-                            className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100]"
+                            className="fixed inset-0 bg-black/85 backdrop-blur-2xl z-[100]"
                         />
                         <motion.div 
                             initial={{ x: '100%', opacity: 0.5 }}
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: '100%', opacity: 0.5 }}
                             transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-                            className="fixed top-0 right-0 h-full w-full md:w-[550px] bg-slate-950 border-l border-white/10 z-[110] shadow-[0_0_100px_rgba(0,0,0,1)] overflow-hidden flex flex-col"
+                            className="fixed top-0 right-0 h-full w-full md:w-[480px] bg-slate-950 border-l border-white/5 z-[110] shadow-[0_0_80px_rgba(0,0,0,1)] overflow-hidden flex flex-col"
                         >
-                            <div className="p-10 flex-1 overflow-y-auto custom-scrollbar">
-                                <header className="flex items-center justify-between mb-12">
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-4 bg-blue-600/10 rounded-2xl ring-4 ring-blue-600/5">
-                                            <Brain className="w-8 h-8 text-blue-500" />
+                            <div className="p-8 flex-1 overflow-y-auto custom-scrollbar">
+                                <header className="flex items-center justify-between mb-10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-3 bg-blue-600/10 rounded-xl ring-2 ring-blue-600/5">
+                                            <Brain className="w-6 h-6 text-blue-500" />
                                         </div>
                                         <div>
-                                            <h2 className="text-2xl font-black italic tracking-tighter uppercase">AI Deep Dive</h2>
-                                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">Generative Neural Analysis v4.2</p>
+                                            <h2 className="text-xl font-black italic tracking-tighter uppercase leading-none">AI Deep Dive</h2>
+                                            <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest mt-1.5 leading-none">Neural Analysis v4.5</p>
                                         </div>
                                     </div>
                                     <button 
                                         onClick={() => setSelectedSuggestion(null)}
-                                        className="p-4 hover:bg-white/10 rounded-full transition-all duration-300 text-gray-400 hover:text-white"
+                                        className="p-3 hover:bg-white/5 rounded-xl transition-all duration-300 text-gray-500 hover:text-white"
                                     >
-                                        <X className="w-8 h-8" />
+                                        <X className="w-6 h-6" />
                                     </button>
                                 </header>
 
-                                <div className="space-y-12">
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-1 bg-blue-500 rounded-full"></div>
-                                            <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em]">{selectedSuggestion.category} Analysis Mode</span>
+                                <div className="space-y-10">
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-2.5">
+                                            <div className="w-6 h-[2px] bg-blue-600 rounded-full"></div>
+                                            <span className="text-[9px] font-black text-blue-500/60 uppercase tracking-[0.2em] leading-none">{selectedSuggestion.category} Analysis Mode</span>
                                         </div>
-                                        <h3 className="text-4xl font-black italic tracking-tighter text-white leading-[1.1]">Personalized <br/>Efficiency Matrix</h3>
+                                        <h3 className="text-3xl font-black italic tracking-tighter text-white leading-[1.05] uppercase">Efficiency <br/>Matrix Brief</h3>
                                     </div>
 
-                                    <Card className="p-8 bg-white/[0.02] border-white/5 relative overflow-hidden group">
-                                        <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/50"></div>
-                                        <div className="flex items-center gap-4 text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">
-                                            <Info className="w-4 h-4 text-blue-500" />
+                                    <Card className="p-6 bg-white/[0.01] border-white/5 relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-[2px] h-full bg-blue-600/40"></div>
+                                        <div className="flex items-center gap-3 text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3 leading-none">
+                                            <Info className="w-3.5 h-3.5 text-blue-500/40" />
                                             Baseline Protocol
                                         </div>
-                                        <p className="text-gray-300 text-lg font-medium italic leading-relaxed">
+                                        <p className="text-gray-400 text-sm font-medium italic leading-relaxed">
                                             "{selectedSuggestion.tip}"
                                         </p>
                                     </Card>
 
-                                    <div className="space-y-6">
+                                    <div className="space-y-5">
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3 text-[10px] font-black text-blue-500 uppercase tracking-widest">
+                                            <div className="flex items-center gap-2.5 text-[9px] font-black text-blue-500/80 uppercase tracking-widest leading-none">
                                                 {analyzingCat === selectedSuggestion.category ? (
-                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                                 ) : (
-                                                    <Sparkles className="w-4 h-4" />
+                                                    <Sparkles className="w-3.5 h-3.5" />
                                                 )}
-                                                Generative Intelligence Brief
+                                                Cognitive Intelligence Brief
                                             </div>
                                             {analyzingCat && (
-                                                <span className="text-[10px] font-black text-gray-600 animate-pulse uppercase tracking-widest">{retryMsg}</span>
+                                                <span className="text-[8px] font-black text-gray-700 animate-pulse uppercase tracking-widest leading-none">{retryMsg}</span>
                                             )}
                                         </div>
 
                                         {analyzingCat === selectedSuggestion.category ? (
-                                            <div className="space-y-8 py-10">
-                                                <div className="flex gap-3 justify-center mb-8">
-                                                    <span className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                                    <span className="w-3 h-3 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                                    <span className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></span>
+                                            <div className="space-y-6 py-6">
+                                                <div className="flex gap-2.5 justify-center mb-6">
+                                                    <span className="w-2 h-2 bg-blue-600/40 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                                    <span className="w-2 h-2 bg-blue-600/40 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                                    <span className="w-2 h-2 bg-blue-600/40 rounded-full animate-bounce"></span>
                                                 </div>
-                                                <div className="space-y-4">
-                                                    <div className="h-6 bg-white/5 rounded-2xl w-3/4 animate-pulse"></div>
-                                                    <div className="h-4 bg-white/5 rounded-2xl w-full animate-pulse"></div>
-                                                    <div className="h-4 bg-white/5 rounded-2xl w-5/6 animate-pulse"></div>
+                                                <div className="space-y-3">
+                                                    <div className="h-4 bg-white/[0.03] rounded-lg w-3/4 animate-pulse"></div>
+                                                    <div className="h-3 bg-white/[0.03] rounded-lg w-full animate-pulse"></div>
+                                                    <div className="h-3 bg-white/[0.03] rounded-lg w-5/6 animate-pulse"></div>
                                                 </div>
                                             </div>
                                         ) : aiResponses[selectedSuggestion.category] ? (
                                             <motion.div 
-                                                initial={{ opacity: 0, y: 20 }}
+                                                initial={{ opacity: 0, y: 15 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                className={`p-10 rounded-[3rem] border transition-all duration-700 ${
+                                                className={`p-8 rounded-[2rem] border transition-all duration-700 ${
                                                     aiResponses[selectedSuggestion.category].includes('LATENCY_ERROR') 
-                                                    ? 'bg-red-500/10 border-red-500/20 text-red-400' 
-                                                    : 'bg-gradient-to-br from-blue-600/10 to-transparent border-white/5'
+                                                    ? 'bg-red-500/5 border-red-500/10 text-red-400' 
+                                                    : 'bg-gradient-to-br from-blue-600/[0.03] to-transparent border-white/5 shadow-2xl'
                                                 }`}
                                             >
                                                 {aiResponses[selectedSuggestion.category].includes('LATENCY_ERROR') ? (
-                                                    <div className="flex flex-col items-center gap-6 py-10">
-                                                        <AlertTriangle className="w-16 h-16 text-red-500/50" />
-                                                        <p className="font-black italic text-xl tracking-tight text-center">{aiResponses[selectedSuggestion.category]}</p>
-                                                        <Button onClick={() => handleLearnMore(selectedSuggestion)} variant="secondary" className="px-8 !bg-white/5 !border-white/10 hover:!bg-white/10">Retry Connection</Button>
+                                                    <div className="flex flex-col items-center gap-4 py-8">
+                                                        <AlertTriangle className="w-12 h-12 text-red-500/30" />
+                                                        <p className="font-black italic text-lg tracking-tight text-center leading-none">{aiResponses[selectedSuggestion.category]}</p>
+                                                        <Button onClick={() => handleLearnMore(selectedSuggestion)} variant="ghost" className="px-6 py-2 text-[9px] uppercase font-black tracking-widest border-white/10 hover:bg-white/5">Retry Engine</Button>
                                                     </div>
                                                 ) : (
-                                                    <div className="custom-markdown">
+                                                    <div className="custom-markdown-compact">
                                                         {formatAiText(aiResponses[selectedSuggestion.category])}
                                                     </div>
                                                 )}
@@ -307,12 +307,12 @@ const Suggestions = () => {
                                 </div>
                             </div>
 
-                            <div className="p-10 bg-slate-900/50 border-t border-white/5">
+                            <div className="p-8 bg-slate-900/60 border-t border-white/5 backdrop-blur-xl">
                                 <Button 
                                     onClick={() => setSelectedSuggestion(null)}
-                                    className="w-full py-6 text-xl uppercase italic tracking-tighter"
+                                    className="w-full py-4 text-xs font-black uppercase italic tracking-tighter"
                                 >
-                                    Synchronize Strategy
+                                    Confirm Strategic Alignment
                                 </Button>
                             </div>
                         </motion.div>
