@@ -41,7 +41,7 @@ router.post('/email', protect, async (req, res) => {
                     </body>
                 </html>
             `,
-            attachments: [{
+            attachment: [{
                 content: base64Data,
                 name: `AquaSmart_Report_${weekLabel.replace(/ /g, '_')}.pdf`
             }]
