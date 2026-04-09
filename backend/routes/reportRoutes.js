@@ -18,9 +18,6 @@ router.post('/email', protect, async (req, res) => {
         return res.status(500).json({ message: 'Email service not configured on server' });
     }
 
-    // Diagnostic log
-    console.log('[DIAGNOSTIC] Sending report email via Axio/Brevo API...');
-
     try {
         const response = await axios.post('https://api.brevo.com/v3/smtp/email', {
             sender: { name: "AquaSmart Reports", email: "aquasmart.management@gmail.com" },

@@ -2,16 +2,10 @@
 const axios = require('axios');
 
 const sendEmail = async (options) => {
-    console.log('[EMAIL INITIATING] To:', options.email);
-
     const apiKey = process.env.BREVO_API_KEY;
     if (!apiKey) {
-        console.error('[EMAIL ERROR] BREVO_API_KEY is missing in environment variables!');
         throw new Error('Email service not configured (missing BREVO_API_KEY).');
     }
-
-    // Diagnostic log (first 10 chars)
-    console.log('[DIAGNOSTIC] API Key loaded:', apiKey.substring(0, 10) + '...');
 
     try {
         const response = await axios.post('https://api.brevo.com/v3/smtp/email', {
