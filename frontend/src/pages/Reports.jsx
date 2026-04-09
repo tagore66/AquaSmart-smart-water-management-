@@ -44,6 +44,177 @@ const Reports = () => {
     });
 
     const reportRef = useRef();
+    const exportRef = useRef();
+
+    // Export-safe template using inline hex styles and standard CSS properties
+    // to avoid OKLCH parsing issues in html2canvas.
+    const ReportExportTemplate = ({ reportData, aiReport, chartData, weekLabel, COLORS }) => {
+        if (!reportData) return null;
+        
+        const safeStyles = {
+            container: {
+                backgroundColor: '#020617',
+                color: '#ffffff',
+                fontFamily: 'sans-serif',
+                width: '750px',
+                padding: '0',
+                margin: '0',
+                borderRadius: '2rem',
+                border: '1px solid #1e293b',
+                overflow: 'hidden',
+                position: 'relative',
+                display: 'block'
+            },
+            header: {
+                padding: '32px',
+                backgroundColor: '#2563eb',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+            },
+            body: {
+                padding: '40px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '40px'
+            },
+            hero: {
+                textAlign: 'center',
+                padding: '32px 0',
+                borderRadius: '2rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid #1e293b'
+            },
+            statsGrid: {
+                display: 'flex',
+                gap: '20px'
+            },
+            statCard: {
+                flex: 1,
+                padding: '20px',
+                borderRadius: '1rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid #1e293b',
+                textAlign: 'center'
+            },
+            chartGrid: {
+                display: 'flex',
+                gap: '40px'
+            },
+            aiSection: {
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '24px'
+            },
+            aiCard: {
+                padding: '16px',
+                borderRadius: '1rem',
+                backgroundColor: 'rgba(124, 58, 237, 0.03)',
+                border: '1px solid rgba(124, 58, 237, 0.1)',
+                display: 'flex',
+                gap: '14px'
+            },
+            summaryCard: {
+                padding: '32px',
+                borderRadius: '2rem',
+                backgroundColor: 'rgba(30, 41, 59, 0.4)',
+                border: '1px solid #1e293b'
+            },
+            footer: {
+                padding: '32px',
+                backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '8px',
+                fontWeight: 'bold',
+                color: '#475569',
+                textTransform: 'uppercase',
+                letterSpacing: '0.4em'
+            }
+        };
+
+        return (
+            <div data-export-template="true" style={safeStyles.container}>
+                <div style={safeStyles.header}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ padding: '12px', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '0.75rem' }}>
+                            <div style={{ width: '24px', height: '24px', backgroundColor: '#ffffff', borderRadius: '50%' }}></div>
+                        </div>
+                        <div>
+                            <h2 style={{ fontSize: '24px', fontWeight: '900', fontStyle: 'italic', letterSpacing: '-0.05em', margin: 0 }}>AQUASMART</h2>
+                            <p style={{ fontSize: '8px', fontWeight: '900', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(219, 234, 254, 0.6)', margin: '4px 0 0 0' }}>Verified Analytics</p>
+                        </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: '18px', fontWeight: '900', fontStyle: 'italic', margin: '0 0 2px 0' }}>{weekLabel.toUpperCase()}</p>
+                        <p style={{ fontSize: '9px', fontWeight: '900', opacity: 0.4, letterSpacing: '0.1em', margin: 0 }}>ID: {reportData._id.slice(-8).toUpperCase()}</p>
+                    </div>
+                </div>
+
+                <div style={safeStyles.body}>
+                    <div style={safeStyles.hero}>
+                        <p style={{ fontSize: '9px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5em', color: '#475569', margin: '0 0 12px 0' }}>Weekly Consumption Meta</p>
+                        <div style={{ fontSize: '60px', fontWeight: '900', fontStyle: 'italic', letterSpacing: '-0.05em', margin: 0 }}>
+                            {reportData.totalLiters} <span style={{ fontSize: '20px', fontWeight: '900', fontStyle: 'normal', color: '#3b82f6' }}>L</span>
+                        </div>
+                    </div>
+
+                    <div style={safeStyles.statsGrid}>
+                        <div style={safeStyles.statCard}>
+                            <p style={{ fontSize: '8px', fontWeight: '900', letterSpacing: '0.2em', color: '#475569', margin: '0 0 6px 0' }}>EFFICIENCY</p>
+                            <p style={{ fontSize: '20px', fontWeight: '900', fontStyle: 'italic', color: '#38bdf8', margin: 0 }}>{Math.min(100, Math.round(((135 * reportData.numPeople * 7) / reportData.totalLiters) * 100))}%</p>
+                        </div>
+                        <div style={safeStyles.statCard}>
+                            <p style={{ fontSize: '8px', fontWeight: '900', letterSpacing: '0.2em', color: '#475569', margin: '0 0 6px 0' }}>STABILITY</p>
+                            <p style={{ fontSize: '20px', fontWeight: '900', fontStyle: 'italic', color: '#4ade80', margin: 0 }}>{reportData.totalLiters < (135 * reportData.numPeople * 7) ? 'PEAK' : 'BASE'}</p>
+                        </div>
+                        <div style={safeStyles.statCard}>
+                            <p style={{ fontSize: '8px', fontWeight: '900', letterSpacing: '0.2em', color: '#475569', margin: '0 0 6px 0' }}>PRIMARY</p>
+                            <p style={{ fontSize: '20px', fontWeight: '900', fontStyle: 'italic', color: '#fbbf24', margin: 0 }}>{Object.entries(reportData.categories).reduce((a, b) => a[1] > b[1] ? a : b)[0].toUpperCase()}</p>
+                        </div>
+                    </div>
+
+                    <div style={safeStyles.chartGrid}>
+                        <div style={{ flex: 1, padding: '24px', backgroundColor: 'rgba(255, 255, 255, 0.01)', border: '1px solid #1e293b', borderRadius: '2rem' }}>
+                            <p style={{ fontSize: '9px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.3em', color: '#475569', margin: '0 0 24px 0' }}>Sector Distribution</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {Object.entries(reportData.categories).map(([name, value], idx) => (
+                                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', backgroundColor: 'rgba(255, 255, 255, 0.02)', borderRadius: '0.75rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: COLORS[idx % COLORS.length] }}></div>
+                                            <span style={{ fontSize: '12px', fontWeight: 'bold', fontStyle: 'italic', color: '#94a3b8' }}>{name.charAt(0).toUpperCase() + name.slice(1)}</span>
+                                        </div>
+                                        <span style={{ fontSize: '14px', fontWeight: '900', fontStyle: 'italic' }}>{value}L</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            <div style={safeStyles.aiSection}>
+                                <p style={{ fontSize: '9px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.3em', color: '#a78bfa', margin: 0 }}>Cognitive Insights</p>
+                                {aiReport.suggestions.slice(0, 3).map((s, idx) => (
+                                    <div key={idx} style={safeStyles.aiCard}>
+                                        <div style={{ width: '4px', height: '4px', backgroundColor: '#a78bfa', marginTop: '6px', flexShrink: 0 }}></div>
+                                        <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#94a3b8', margin: 0, fontStyle: 'italic' }}>{s.replace(/^- /, '')}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={safeStyles.summaryCard}>
+                        <p style={{ fontSize: '9px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.3em', color: '#475569', margin: '0 0 16px 0' }}>Strategic Brief</p>
+                        <p style={{ fontSize: '14px', fontWeight: 'bold', fontStyle: 'italic', lineHeight: '1.6', color: '#cbd5e1', margin: 0 }}>{aiReport.summary}</p>
+                    </div>
+                </div>
+
+                <div style={safeStyles.footer}>
+                    <span>AquaSmart Analytics v3.5 / Safe-Mode Export</span>
+                    <span>System Certified</span>
+                </div>
+            </div>
+        );
+    };
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -109,46 +280,29 @@ const Reports = () => {
         setError('');
 
         try {
-            const reportElement = reportRef.current;
+            const reportElement = exportRef.current;
             await new Promise(resolve => setTimeout(resolve, 300));
 
             const canvas = await html2canvas(reportElement, {
                 scale: 2,
                 useCORS: true,
-                backgroundColor: '#0c111d',
-                scrollX: 0,
-                scrollY: -window.scrollY,
-                windowWidth: document.documentElement.offsetWidth,
-                windowHeight: document.documentElement.offsetHeight,
+                backgroundColor: '#020617',
                 logging: false,
                 onclone: (clonedDoc) => {
-                    const clonedReport = clonedDoc.querySelector('[data-report-container="true"]');
-                    if (clonedReport) {
-                        clonedReport.style.height = 'auto';
-                        clonedReport.style.maxHeight = 'none';
-                        clonedReport.style.overflow = 'visible';
-                        clonedReport.style.width = '750px';
-
-                        // Resolve oklch colors by flattening computed styles to rgb
-                        const elements = clonedReport.querySelectorAll('*');
-                        elements.forEach(el => {
-                            const styles = window.getComputedStyle(el);
-                            el.style.color = styles.color;
-                            el.style.backgroundColor = styles.backgroundColor;
-                            el.style.borderColor = styles.borderColor;
-                            el.style.top = styles.top;
-                            el.style.bottom = styles.bottom;
-                            el.style.left = styles.left;
-                            el.style.right = styles.right;
-                            el.style.backgroundImage = styles.backgroundImage;
-                            el.style.boxShadow = styles.boxShadow;
-                            
-                            // Also handle SVG specific properties if any
-                            if (el.tagName.toLowerCase() === 'path' || el.tagName.toLowerCase() === 'circle') {
-                                el.style.fill = styles.fill;
-                                el.style.stroke = styles.stroke;
-                            }
-                        });
+                    // Critical: Remove all global Tailwind v4 stylesheets to avoid OKLCH parsing errors
+                    const styleTags = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
+                    styleTags.forEach(tag => tag.remove());
+                    
+                    // The targeted element is hidden in the real DOM, make it visible in the cloned DOM for capture
+                    const exportContainer = clonedDoc.querySelector('[style*="position: absolute"]');
+                    if (exportContainer) {
+                        const template = exportContainer.querySelector('[data-export-template="true"]');
+                        if (template) {
+                            template.style.display = 'block';
+                            template.style.position = 'relative';
+                            template.style.top = '0';
+                            template.style.left = '0';
+                        }
                     }
                 }
             });
@@ -413,6 +567,17 @@ const Reports = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Hidden Export Container - Positioned off-screen and isolated from global styles */}
+            <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', opacity: 0, pointerEvents: 'none', visibility: 'hidden' }}>
+                <ReportExportTemplate 
+                    reportData={reportData} 
+                    aiReport={aiReport} 
+                    chartData={chartData} 
+                    weekLabel={weekLabel}
+                    COLORS={COLORS}
+                />
             </div>
 
             {/* Email Modal */}
