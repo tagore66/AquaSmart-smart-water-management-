@@ -1,5 +1,5 @@
 // utils/emailService.js
-const Brevo = require('@getbrevo/brevo');
+const axios = require('axios');
 
 const sendEmail = async (options) => {
     console.log('[EMAIL INITIATING] To:', options.email);
@@ -10,36 +10,36 @@ const sendEmail = async (options) => {
         throw new Error('Email service not configured (missing BREVO_API_KEY).');
     }
 
+    // Diagnostic log (first 10 chars)
+    console.log('[DIAGNOSTIC] API Key loaded:', apiKey.substring(0, 10) + '...');
+
     try {
-        let defaultClient = Brevo.ApiClient.instance;
-        let apiKeyAuth = defaultClient.authentications['api-key'];
-        apiKeyAuth.apiKey = apiKey;
-
-        let apiInstance = new Brevo.TransactionalEmailsApi();
-        let sendSmtpEmail = new Brevo.SendSmtpEmail();
-
-        sendSmtpEmail.subject = options.subject;
-        sendSmtpEmail.htmlContent = options.html || `<html><body><p>${options.message}</p></body></html>`;
-        sendSmtpEmail.sender = { "name": "Aqua Smart", "email": "aquasmart.management@gmail.com" };
-        sendSmtpEmail.to = [{ "email": options.email }];
-        
-        if (options.message && !options.html) {
-            sendSmtpEmail.textContent = options.message;
-        }
-
-        const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+        const response = await axios.post('https://api.brevo.com/v3/smtp/email', {
+            sender: { name: "Aqua Smart", email: "aquasmart.management@gmail.com" },
+            to: [{ email: options.email }],
+            subject: options.subject,
+            htmlContent: options.html || `<html><body><p>${options.message}</p></body></html>`,
+            textContent: options.message || ""
+        }, {
+            headers: {
+                'api-key': apiKey,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
 
         console.log('--- [EMAIL SYSTEM LOG] ---');
-        console.log('Status: Success (SENT via Brevo)');
-        console.log('Message ID:', data.messageId);
+        console.log('Status: Success (SENT via Brevo API)');
+        console.log('Message ID:', response.data.messageId);
         console.log('----------------------------');
 
-        return data;
+        return response.data;
     } catch (error) {
         console.error('--- [EMAIL SYSTEM FATAL ERROR] ---');
-        console.error('Email report error:', error.message);
-        if (error.response && error.response.body) {
-            console.error('Brevo API Error Detail:', JSON.stringify(error.response.body, null, 2));
+        if (error.response && error.response.data) {
+            console.error('Brevo API Error Detail:', JSON.stringify(error.response.data, null, 2));
+        } else {
+            console.error('Email sending failed:', error.message);
         }
         throw error;
     }
