@@ -128,6 +128,27 @@ const Reports = () => {
                         clonedReport.style.maxHeight = 'none';
                         clonedReport.style.overflow = 'visible';
                         clonedReport.style.width = '750px';
+
+                        // Resolve oklch colors by flattening computed styles to rgb
+                        const elements = clonedReport.querySelectorAll('*');
+                        elements.forEach(el => {
+                            const styles = window.getComputedStyle(el);
+                            el.style.color = styles.color;
+                            el.style.backgroundColor = styles.backgroundColor;
+                            el.style.borderColor = styles.borderColor;
+                            el.style.top = styles.top;
+                            el.style.bottom = styles.bottom;
+                            el.style.left = styles.left;
+                            el.style.right = styles.right;
+                            el.style.backgroundImage = styles.backgroundImage;
+                            el.style.boxShadow = styles.boxShadow;
+                            
+                            // Also handle SVG specific properties if any
+                            if (el.tagName.toLowerCase() === 'path' || el.tagName.toLowerCase() === 'circle') {
+                                el.style.fill = styles.fill;
+                                el.style.stroke = styles.stroke;
+                            }
+                        });
                     }
                 }
             });
