@@ -281,6 +281,9 @@ const Reports = () => {
 
         try {
             const reportElement = exportRef.current;
+            if (!reportElement) {
+                throw new Error("Export engine initialization failed: target element not found");
+            }
             await new Promise(resolve => setTimeout(resolve, 300));
 
             const canvas = await html2canvas(reportElement, {
@@ -326,7 +329,7 @@ const Reports = () => {
             return base64;
         } catch (err) {
             console.error('PDF Generation failed:', err);
-            setError(`Report generation failed: ${err.message}`);
+            setError(`Report generation failed: ${err?.message || err}`);
         } finally {
             setGenerating(false);
         }
@@ -570,7 +573,7 @@ const Reports = () => {
             </div>
 
             {/* Hidden Export Container - Positioned off-screen and isolated from global styles */}
-            <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', opacity: 0, pointerEvents: 'none', visibility: 'hidden' }}>
+            <div ref={exportRef} style={{ position: 'absolute', top: '-9999px', left: '-9999px', opacity: 0, pointerEvents: 'none', visibility: 'hidden' }}>
                 <ReportExportTemplate 
                     reportData={reportData} 
                     aiReport={aiReport} 
