@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -21,8 +21,10 @@ import { useState } from 'react';
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
+
   if (loading) return null;
-  if (!user) return <Navigate to="/" />;
+  if (!user) return <Navigate to="/login" state={{ from: location.pathname }} />;
   return children;
 };
 

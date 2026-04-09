@@ -71,7 +71,7 @@ const addWaterUsage = async (req, res) => {
                         <p style="margin-top: 30px;">Please log in to the dashboard to view your full history and complete the payment.</p>
                         
                         <div style="text-align: center;">
-                            <a href="http://localhost:5173/bills" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px;">View & Pay Bill</a>
+                            <a href="${process.env.FRONTEND_URL || 'https://aqua-smart-smart-water-management.vercel.app'}/bills/${bill._id}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px;">View & Pay Bill</a>
                         </div>
                     </div>
                     <div style="background-color: #f9fafb; padding: 15px; text-align: center; border-top: 1px solid #e5e7eb;">

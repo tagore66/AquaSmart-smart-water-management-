@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Droplet, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -14,6 +14,10 @@ const Signup = () => {
     const [loading, setLoading] = useState(false);
     const { signup } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    
+    // Check if we have a saved redirect path
+    const from = location.state?.from || '/dashboard';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,7 +30,7 @@ const Signup = () => {
         }
         try {
             await signup(firstName, lastName, email, password);
-            navigate('/dashboard');
+            navigate(from, { replace: true });
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to create account. Please try again.');
         } finally {
