@@ -172,11 +172,19 @@ const UsageInput = () => {
                     >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card className="space-y-6">
-                                <div className="flex items-center gap-4 mb-2">
-                                    <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/10"><Users className="text-blue-400 w-5 h-5" /></div>
-                                    <div>
-                                        <h3 className="text-lg font-bold tracking-tight">Household Size</h3>
-                                        <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Residents Count</p>
+                                <div className="flex items-center justify-between gap-4 mb-2">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/10"><Users className="text-blue-400 w-5 h-5" /></div>
+                                        <div>
+                                            <h3 className="text-lg font-bold tracking-tight">Household Size</h3>
+                                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Residents Count</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right bg-blue-500/5 px-4 py-2 rounded-2xl border border-blue-500/10">
+                                        <span className="text-2xl font-black italic bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">
+                                            {numPeople}
+                                        </span>
+                                        <span className="text-[10px] font-bold text-gray-500 ml-1 uppercase">People</span>
                                     </div>
                                 </div>
                                 <Slider 
