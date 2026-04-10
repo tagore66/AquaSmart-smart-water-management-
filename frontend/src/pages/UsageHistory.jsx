@@ -87,7 +87,7 @@ const UsageHistory = () => {
                                 <th className="px-6 py-4 font-black">Week Starting</th>
                                 <th className="px-6 py-4 font-black">Usage Volume</th>
                                 <th className="px-6 py-4 font-black">Household</th>
-                                <th className="px-6 py-4 font-black">Telemetry Status</th>
+                                <th className="px-6 py-4 font-black">Status</th>
                                 <th className="px-6 py-4 font-black text-right">Details</th>
                             </tr>
                         </thead>

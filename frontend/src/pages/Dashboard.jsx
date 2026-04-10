@@ -89,7 +89,7 @@ const Dashboard = () => {
                         </div>
 
                         <div className="max-w-md space-y-4">
-                            <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white drop-shadow-md">Awaiting Telemetry</h2>
+                            <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white drop-shadow-md">Awaiting Data</h2>
                             <p className="text-gray-400 text-sm font-medium leading-relaxed italic mb-4">
                                 Your engine is standing by. Initialize the analytics by logging your first set of water usage data points.
                             </p>
@@ -175,7 +175,7 @@ const Dashboard = () => {
                                     </div>
                                     <h3 className="text-xl font-bold tracking-tight">Consumption Matrix</h3>
                                 </div>
-                                <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Telemetry</span>
+                                <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">This Week</span>
                             </div>
                             <div className="h-64 relative">
                                 <ResponsiveContainer width="100%" height="100%">

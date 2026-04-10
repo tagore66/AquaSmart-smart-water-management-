@@ -476,7 +476,7 @@ const Reports = () => {
                                             <div className="mt-6 flex justify-center relative z-10">
                                                 <div className="px-5 py-1.5 bg-blue-500/10 border border-blue-500/10 rounded-full flex items-center gap-2">
                                                     <TrendingDown className="w-3.5 h-3.5 text-blue-400" />
-                                                    <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none mt-0.5">Telemetry Active</span>
+                                                    <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none mt-0.5">Monitoring Active</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -566,7 +566,7 @@ const Reports = () => {
 
                                     {/* Footer Branding */}
                                     <div className="p-8 bg-slate-900/80 flex justify-between items-center text-[7.5px] font-black uppercase tracking-[0.4em] text-gray-600 italic">
-                                        <span>AquaSmart Core v3.2 / High-Bit Telemetry</span>
+                                        <span>AquaSmart Core v3.2 / Premium Monitoring</span>
                                         <span>Authentication Certified</span>
                                     </div>
                                 </div>

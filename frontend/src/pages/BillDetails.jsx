@@ -151,7 +151,7 @@ const BillDetails = () => {
                                     <p className="font-black text-base italic text-gray-300 leading-none">{new Date(bill?.usage.weekStarting).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] mb-1.5 leading-none">Total Telemetry</p>
+                                    <p className="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] mb-1.5 leading-none">Total Usage</p>
                                     <div className="flex items-end gap-1.5 leading-none">
                                         <p className="font-black text-4xl italic tracking-tighter text-white leading-none">
                                             <AnimatedNumber value={bill?.usage.totalLiters || 0} />
