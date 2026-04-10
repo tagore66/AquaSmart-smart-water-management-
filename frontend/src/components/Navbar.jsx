@@ -43,7 +43,7 @@ const Navbar = () => {
         <>
             {/* Desktop Sidebar */}
             <nav 
-                className="fixed left-0 top-0 h-screen w-20 md:w-64 glass p-4 hidden sm:flex flex-col items-center md:items-stretch gap-8 z-50 transition-all duration-300"
+                className="fixed left-0 top-0 h-screen w-20 md:w-64 bg-slate-900/80 backdrop-blur-3xl border-r border-white/10 shadow-2xl p-4 hidden sm:flex flex-col items-center md:items-stretch gap-8 z-50 transition-all duration-300 overflow-hidden"
                 style={{ transform: 'translateZ(0)' }}
             >
                 <div className="flex items-center gap-3 px-2 shrink-0">
