@@ -16,6 +16,7 @@ const Profile = () => {
     const [updating, setUpdating] = useState(false);
     const [otpLoading, setOtpLoading] = useState(false);
     const [otpSent, setOtpSent] = useState(false);
+    const [otpVerified, setOtpVerified] = useState(false);
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -72,12 +73,29 @@ const Profile = () => {
         try {
             await axios.post('/users/password-reset-otp');
             setOtpSent(true);
+            setOtpVerified(false);
             setSuccess('OTP sent to your registered email.');
             setTimeout(() => setSuccess(''), 3000);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to send OTP');
         } finally {
             setOtpLoading(false);
+        }
+    };
+
+    const handleVerifyOTP = async (e) => {
+        e.preventDefault();
+        setUpdating(true);
+        setError('');
+        try {
+            await axios.post('/users/verify-otp', { otp });
+            setOtpVerified(true);
+            setSuccess('Code verified. Enter your new password.');
+            setTimeout(() => setSuccess(''), 3000);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Invalid or expired code.');
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -93,6 +111,7 @@ const Profile = () => {
             setSuccess('Password changed successfully!');
             setShowPasswordModal(false);
             setOtpSent(false);
+            setOtpVerified(false);
             setOtp('');
             setNewPassword('');
             setConfirmPassword('');
@@ -258,13 +277,14 @@ const Profile = () => {
                 {showPasswordModal && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/85 backdrop-blur-2xl">
                         <motion.div 
-                            initial={{ opacity: 0, scale: 0.94, y: 30 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.94, y: 30 }}
-                            className="glass max-w-sm w-full p-8 space-y-8 relative rounded-[2.5rem] border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,1)] border-t-8 border-yellow-600"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 20 }}
+                            transition={{ duration: 0.2 }}
+                            className="glass max-w-sm w-full p-8 space-y-8 relative rounded-[2.5rem] border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,1)] border-t-8 border-yellow-600 bg-[#0b1c3d]"
                         >
                             <button 
-                                onClick={() => { setShowPasswordModal(false); setOtpSent(false); }}
+                                onClick={() => { setShowPasswordModal(false); setOtpSent(false); setOtpVerified(false); }}
                                 className="absolute top-6 right-6 p-2.5 hover:bg-white/5 rounded-xl transition-all duration-300 text-gray-600 hover:text-white"
                             >
                                 <X className="w-5 h-5" />
@@ -274,13 +294,13 @@ const Profile = () => {
                                 <div className="w-20 h-20 bg-yellow-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 ring-4 ring-yellow-500/5">
                                     <Key className="w-8 h-8 text-yellow-500" />
                                 </div>
-                                <h2 className="text-2xl font-black italic tracking-tighter uppercase relative leading-none">
+                                <h2 className="text-2xl font-black italic tracking-tighter uppercase relative leading-none text-white">
                                     Change Password
                                 </h2>
-                                <p className="text-gray-500 font-bold leading-relaxed italic text-xs mt-4 px-4">
-                                    {otpSent 
-                                        ? "Verification code sent to your email inbox."
-                                        : "Enter a new secure password for your account."}
+                                <p className="text-gray-400 font-bold leading-relaxed italic text-xs mt-4 px-4">
+                                    {!otpSent && "Request a secure code to authorize your password change."}
+                                    {otpSent && !otpVerified && "Verification code sent to your email inbox."}
+                                    {otpVerified && "Enter a new secure password for your account."}
                                 </p>
                             </div>
 
@@ -293,39 +313,61 @@ const Profile = () => {
                                 >
                                     {otpLoading ? 'Generating...' : 'Send Verification Code'}
                                 </Button>
-                            ) : (
-                                <form onSubmit={handleResetPassword} className="space-y-6 mt-6">
+                            ) : !otpVerified ? (
+                                <form onSubmit={handleVerifyOTP} className="space-y-6 mt-6">
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Verification Code</label>
+                                        <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1.5 leading-none">Verification Code</label>
                                         <input 
                                             type="text" 
                                             maxLength="6"
                                             value={otp}
                                             onChange={(e) => setOtp(e.target.value)}
-                                            className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-yellow-500/40 focus:bg-yellow-500/[0.03] text-center text-2xl tracking-[0.4em] font-mono text-yellow-500 transition-all font-black placeholder-white/5"
+                                            className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-yellow-500/40 focus:bg-yellow-500/[0.03] text-center text-2xl tracking-[0.4em] font-mono text-yellow-500 transition-all font-black placeholder-white/10"
                                             placeholder="000000"
                                             required
                                         />
                                     </div>
+                                    <div className="space-y-3 pt-2">
+                                        <Button 
+                                            type="submit" 
+                                            disabled={updating}
+                                            className="w-full py-4 text-xs font-black italic uppercase tracking-tighter"
+                                            icon={updating ? Loader2 : ArrowRight}
+                                        >
+                                            {updating ? 'Verifying...' : 'Verify Code'}
+                                        </Button>
+                                        <div className="text-center">
+                                            <button 
+                                                type="button"
+                                                onClick={handleSendOTP}
+                                                className="text-[8px] font-black uppercase tracking-[0.2em] text-blue-500/80 hover:text-blue-400 transition-colors py-1.5"
+                                            >
+                                                Resend Verification Code
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            ) : (
+                                <form onSubmit={handleResetPassword} className="space-y-6 mt-6">
                                     <div className="space-y-4">
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">New Password</label>
+                                            <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1.5 leading-none">New Password</label>
                                             <input 
                                                 type="password" 
                                                 value={newPassword}
                                                 onChange={(e) => setNewPassword(e.target.value)}
-                                                className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] text-center text-xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/5"
+                                                className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] text-center text-xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/10"
                                                 placeholder="••••••••"
                                                 required
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Confirm Password</label>
+                                            <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1.5 leading-none">Confirm Password</label>
                                             <input 
                                                 type="password" 
                                                 value={confirmPassword}
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                                className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] text-center text-xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/5"
+                                                className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500/40 focus:bg-blue-500/[0.03] text-center text-xl tracking-[0.2em] font-mono transition-all text-white placeholder-white/10"
                                                 placeholder="••••••••"
                                                 required
                                             />
@@ -340,15 +382,6 @@ const Profile = () => {
                                         >
                                             {updating ? 'Saving...' : 'Save New Password'}
                                         </Button>
-                                        <div className="text-center">
-                                            <button 
-                                                type="button"
-                                                onClick={handleSendOTP}
-                                                className="text-[8px] font-black uppercase tracking-[0.2em] text-blue-500/60 hover:text-blue-400 transition-colors py-1.5"
-                                            >
-                                                Resend Verification Code
-                                            </button>
-                                        </div>
                                     </div>
                                 </form>
                             )}

@@ -9,7 +9,8 @@ const {
     getUsers,
     updateUserProfile,
     sendPasswordResetOTP,
-    verifyOTPAndResetPassword
+    verifyOTPAndResetPassword,
+    verifyOTPOnly
 } = require('../controllers/userController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -34,6 +35,7 @@ router.route('/profile')
     .put(protect, updateUserProfile);
 
 router.post('/password-reset-otp', protect, sendPasswordResetOTP);
+router.post('/verify-otp', protect, verifyOTPOnly);
 router.put('/reset-password', protect, verifyOTPAndResetPassword);
 
 router.get('/', protect, admin, getUsers);

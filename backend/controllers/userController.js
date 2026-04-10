@@ -181,6 +181,24 @@ const verifyOTPAndResetPassword = async (req, res) => {
     }
 };
 
+// @desc    Verify OTP Only (Preliminary check)
+// @route   POST /api/users/verify-otp
+// @access  Private
+const verifyOTPOnly = async (req, res) => {
+    const { otp } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (user && user.resetPasswordOTP === otp && user.resetPasswordExpires > Date.now()) {
+        res.json({ message: 'OTP verified successfully' });
+    } else if (user && user.resetPasswordOTP !== otp) {
+        res.status(400).json({ message: 'Invalid OTP' });
+    } else if (user && user.resetPasswordExpires <= Date.now()) {
+        res.status(400).json({ message: 'OTP expired' });
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
+};
+
 // @desc    Get all users (Admin)
 // @route   GET /api/users
 // @access  Private/Admin
@@ -196,5 +214,6 @@ module.exports = {
     getUsers,
     updateUserProfile,
     sendPasswordResetOTP,
-    verifyOTPAndResetPassword
+    verifyOTPAndResetPassword,
+    verifyOTPOnly
 };
