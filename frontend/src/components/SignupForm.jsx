@@ -140,6 +140,30 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                 </button>
             </form>
 
+            <div className="relative my-6 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-white/10"></div>
+                </div>
+                <span className="relative px-4 bg-[#0f172a] text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    Or
+                </span>
+            </div>
+
+            <a 
+                href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/users/auth/google`}
+                className="w-full flex items-center justify-center gap-4 px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 group"
+            >
+                <div className="p-1.5 bg-white rounded-lg group-hover:scale-110 transition-transform">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.273 0 3.159 2.727 1.145 6.722l4.121 3.043z" />
+                        <path fill="#4285F4" d="M23.609 12.218c0-.791-.073-1.545-.209-2.273H12v4.51h6.509a5.556 5.556 0 0 1-2.418 3.636l4.29 3.328c2.509-2.318 3.955-5.727 3.955-9.691z" />
+                        <path fill="#34A853" d="M12 24c3.245 0 5.973-1.073 7.964-2.909l-4.29-3.327c-1.191.8-2.718 1.273-4.414 1.273-3.395 0-6.27-2.291-7.295-5.364L3.823 16.71c2.014 3.995 6.127 6.718 10.854 6.718z" />
+                        <path fill="#FBBC05" d="M4.705 13.682a7.034 7.034 0 0 1 0-4.364L.584 6.275a11.957 11.957 0 0 0 0 10.45l4.121-3.043z" />
+                    </svg>
+                </div>
+                <span className="font-bold text-gray-300 group-hover:text-white transition-colors">Sign up with Google</span>
+            </a>
+
             <div className="mt-6 pt-6 border-t border-white border-opacity-10 text-center">
                 <p className="text-gray-400">
                     Already have an account?{' '}
