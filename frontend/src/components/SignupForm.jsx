@@ -66,7 +66,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                                 required
                                 value={formData.firstName}
                                 onChange={handleChange}
-                                placeholder=""
+                                placeholder="Enter First Name"
                                 className="input-field px-4 py-3"
                             />
                     </div>
@@ -78,7 +78,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                             required
                             value={formData.lastName}
                             onChange={handleChange}
-                            placeholder=""
+                            placeholder="Enter Last Name"
                             className="input-field px-4 py-3"
                         />
                     </div>
@@ -92,7 +92,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                         required
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder=""
+                        placeholder="Enter Email Address"
                         className="input-field px-4 py-3"
                     />
                 </div>
@@ -106,7 +106,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                             required
                             value={formData.password}
                             onChange={handleChange}
-                            placeholder=""
+                            placeholder="Enter Password"
                             className="input-field px-4 py-3"
                         />
                     </div>
@@ -118,7 +118,7 @@ const SignupForm = ({ onSuccess, onSwitchToLogin }) => {
                             required
                             value={formData.confirmPassword}
                             onChange={handleChange}
-                            placeholder=""
+                            placeholder="Confirm Password"
                             className="input-field px-4 py-3"
                         />
                     </div>
