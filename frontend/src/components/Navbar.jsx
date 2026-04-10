@@ -8,24 +8,21 @@ import { motion } from 'framer-motion';
 
 const NavLink = ({ to, icon: Icon, label, active }) => (
     <Link to={to} className="relative group block">
-        <motion.div 
-            whileHover={{ x: 4 }}
+        <div 
             className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
                 active 
-                ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]' 
+                ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-[0_4px_12px_rgba(59,130,246,0.1)]' 
                 : 'text-gray-400 hover:bg-white/5 hover:text-white'
             }`}
         >
             <Icon className={`w-6 h-6 transition-transform duration-300 group-hover:scale-110 ${active ? 'text-blue-400' : ''}`} />
             <span className="hidden md:block font-bold tracking-tight">{label}</span>
             {active && (
-                <motion.div 
-                    layoutId="active-nav"
+                <div 
                     className="absolute left-0 w-1 h-6 bg-blue-500 rounded-full"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
             )}
-        </motion.div>
+        </div>
     </Link>
 );
 
@@ -43,7 +40,7 @@ const Navbar = () => {
         <>
             {/* Desktop Sidebar */}
             <nav 
-                className="fixed left-0 top-0 h-screen w-20 md:w-64 bg-slate-900/80 backdrop-blur-3xl border-r border-white/10 shadow-2xl p-4 hidden sm:flex flex-col items-center md:items-stretch gap-8 z-50 transition-all duration-300 overflow-hidden"
+                className="fixed left-0 top-0 h-screen w-20 md:w-64 bg-slate-900/95 backdrop-blur-3xl border-r border-white/10 shadow-2xl p-4 hidden sm:flex flex-col items-center md:items-stretch gap-8 z-50 isolate transition-all duration-300 overflow-hidden"
                 style={{ transform: 'translateZ(0)' }}
             >
                 <div className="flex items-center gap-3 px-2 shrink-0">
