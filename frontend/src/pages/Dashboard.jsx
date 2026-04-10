@@ -10,7 +10,7 @@ import {
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend
 } from 'recharts';
 import axios from 'axios';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import AIChatBot from '../components/AIChatBot';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
