@@ -66,21 +66,49 @@ const Dashboard = () => {
             loading={loading}
         >
             {!latestUsage ? (
-                <Card className="flex flex-col items-center justify-center p-16 text-center space-y-6">
-                    <div className="p-6 bg-blue-500/10 rounded-full">
-                        <Droplet className="w-12 h-12 text-blue-400" />
-                    </div>
-                    <div className="max-w-md space-y-3">
-                        <h2 className="text-2xl font-bold italic tracking-tighter uppercase">No Baseline Data</h2>
-                        <p className="text-gray-400 text-sm font-medium">Initialize your industrial telemetry by entering your first weekly usage data.</p>
-                        <Button 
-                            onClick={() => navigate('/usage')}
-                            className="mt-4"
-                            icon={ChevronRight}
-                        >
-                            Log Usage
-                        </Button>
-                    </div>
+                <Card className="flex flex-col items-center justify-center py-24 text-center border-white/5 relative overflow-hidden">
+                    {/* Decorative Background */ }
+                    <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none" />
+
+                    <motion.div 
+                        initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7, ease: "easeOut" }}
+                        className="relative z-10 flex flex-col items-center"
+                    >
+                        <div className="relative mb-8 mt-4">
+                            <motion.div 
+                                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                                className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl"
+                            />
+                            <div className="relative p-7 bg-white/5 border border-white/10 rounded-[2rem] shadow-2xl backdrop-blur-md">
+                                <Activity className="w-14 h-14 text-blue-400 drop-shadow-[0_0_15px_rgba(96,165,250,0.5)]" />
+                            </div>
+                        </div>
+
+                        <div className="max-w-md space-y-4">
+                            <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white drop-shadow-md">Awaiting Telemetry</h2>
+                            <p className="text-gray-400 text-sm font-medium leading-relaxed italic mb-4">
+                                Your engine is standing by. Initialize the analytics by logging your first set of water usage data points.
+                            </p>
+                            
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="mt-6"
+                            >
+                                <Button 
+                                    onClick={() => navigate('/usage')}
+                                    className="px-8 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] border border-blue-500/30 transition-all"
+                                    icon={ChevronRight}
+                                >
+                                    Add Usage
+                                </Button>
+                            </motion.div>
+                        </div>
+                    </motion.div>
                 </Card>
             ) : (
                 <div className="space-y-8">
