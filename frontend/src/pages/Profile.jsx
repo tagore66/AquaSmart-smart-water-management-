@@ -219,10 +219,10 @@ const Profile = () => {
                 <div className="space-y-6">
                     <Card className="p-6 border-l-2 border-l-yellow-500 border-white/5 bg-gradient-to-br from-yellow-500/[0.02] to-transparent">
                         <h3 className="text-lg font-black italic tracking-tighter mb-4 flex items-center gap-2.5 uppercase text-white/90">
-                            <Shield className="text-yellow-500 w-4 h-4" /> Security Node
+                            <Shield className="text-yellow-500 w-4 h-4" /> Security Settings
                         </h3>
                         <p className="text-gray-500 font-bold text-xs mb-6 leading-relaxed italic">
-                            Maintain core integrity by rotating credentials. Secure OTP required.
+                            Update your password to keep your account safe. An email verification code will be required.
                         </p>
                         
                         <Button 
@@ -235,8 +235,8 @@ const Profile = () => {
                                     <Key className="w-4 h-4 text-yellow-500" />
                                 </div>
                                 <div className="leading-none">
-                                    <p className="font-black text-gray-300 group-hover:text-yellow-500 transition-colors text-sm uppercase tracking-tighter italic">Rotate Cipher</p>
-                                    <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-600 mt-1.5">Validation Key Required</p>
+                                    <p className="font-black text-gray-300 group-hover:text-yellow-500 transition-colors text-sm uppercase tracking-tighter italic">Change Password</p>
+                                    <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-600 mt-1.5">Verification Required</p>
                                 </div>
                             </div>
                             <ArrowRight className="w-4 h-4 text-gray-700 group-hover:translate-x-0.5 group-hover:text-yellow-500 transition-all" />
@@ -248,7 +248,7 @@ const Profile = () => {
                             <CheckCircle2 className="w-8 h-8 text-blue-500/60" />
                         </div>
                         <h4 className="font-black italic tracking-tighter text-lg mb-1 uppercase text-white/80">AUTHENTICATED</h4>
-                        <p className="text-[8px] font-black uppercase tracking-[0.4em] text-blue-500/40 mt-1">JWT Encryption Active</p>
+                        <p className="text-[8px] font-black uppercase tracking-[0.4em] text-blue-500/40 mt-1">Secured Account</p>
                     </Card>
                 </div>
             </div>
@@ -275,12 +275,12 @@ const Profile = () => {
                                     <Key className="w-8 h-8 text-yellow-500" />
                                 </div>
                                 <h2 className="text-2xl font-black italic tracking-tighter uppercase relative leading-none">
-                                    Cipher Update
+                                    Change Password
                                 </h2>
                                 <p className="text-gray-500 font-bold leading-relaxed italic text-xs mt-4 px-4">
                                     {otpSent 
-                                        ? "Validation token dispatched to core inbox."
-                                        : "Initiate secure credential rotation protocol."}
+                                        ? "Verification code sent to your email inbox."
+                                        : "Enter a new secure password for your account."}
                                 </p>
                             </div>
 
@@ -291,12 +291,12 @@ const Profile = () => {
                                     className="w-full py-4 mt-6 text-xs uppercase font-black italic tracking-tighter"
                                     icon={otpLoading ? Loader2 : Key}
                                 >
-                                    {otpLoading ? 'Generating...' : 'Request Validation Token'}
+                                    {otpLoading ? 'Generating...' : 'Send Verification Code'}
                                 </Button>
                             ) : (
                                 <form onSubmit={handleResetPassword} className="space-y-6 mt-6">
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Security Token</label>
+                                        <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Verification Code</label>
                                         <input 
                                             type="text" 
                                             maxLength="6"
@@ -309,7 +309,7 @@ const Profile = () => {
                                     </div>
                                     <div className="space-y-4">
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Core Cipher</label>
+                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">New Password</label>
                                             <input 
                                                 type="password" 
                                                 value={newPassword}
@@ -320,7 +320,7 @@ const Profile = () => {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Confirm Cipher</label>
+                                            <label className="text-[9px] font-black text-gray-600 uppercase tracking-widest ml-1.5 leading-none">Confirm Password</label>
                                             <input 
                                                 type="password" 
                                                 value={confirmPassword}
@@ -338,7 +338,7 @@ const Profile = () => {
                                             className="w-full py-4 text-xs font-black italic uppercase tracking-tighter"
                                             icon={updating ? Loader2 : Save}
                                         >
-                                            {updating ? 'Encrypting...' : 'Override Key'}
+                                            {updating ? 'Saving...' : 'Save New Password'}
                                         </Button>
                                         <div className="text-center">
                                             <button 
@@ -346,7 +346,7 @@ const Profile = () => {
                                                 onClick={handleSendOTP}
                                                 className="text-[8px] font-black uppercase tracking-[0.2em] text-blue-500/60 hover:text-blue-400 transition-colors py-1.5"
                                             >
-                                                Resend Validation Key
+                                                Resend Verification Code
                                             </button>
                                         </div>
                                     </div>
